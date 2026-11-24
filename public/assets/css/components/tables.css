@@ -721,3 +721,36 @@ body div.dt-button-collection.dt-button-collection {
     box-shadow: var(--large-shadow);
     padding: 8px;
 }
+
+/* A secondary line or muted value in a table cell: where a value came from, what was in the file. */
+.lt-cell-note {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+td .lt-cell-note {
+    display: block;
+    margin-top: 2px;
+}
+
+td.lt-cell-note {
+    display: table-cell;
+}
+
+/* A table cell with a problem (import check): tinted, with a danger edge and the reason under the value. */
+td.lt-cell--problem {
+    background: color-mix(in srgb, var(--red) 7%, transparent);
+    box-shadow: inset 3px 0 0 var(--red);
+}
+
+.lt-cell-problem {
+    display: block;
+    margin-top: 3px;
+    color: var(--red);
+    font-size: var(--font-size-s);
+}
+
+th .lt-cell-note {
+    display: block;
+    font-weight: 400;
+}

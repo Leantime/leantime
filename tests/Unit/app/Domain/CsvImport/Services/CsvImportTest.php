@@ -2,9 +2,13 @@
 
 namespace Unit\app\Domain\CsvImport\Services;
 
+use Leantime\Core\Language;
 use Leantime\Domain\Connector\Models\Integration;
 use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\CsvImport\Services\CsvImport;
+use Leantime\Domain\CsvImport\Services\FileReader;
+use Leantime\Domain\CsvImport\Services\ImportFiles;
+use Leantime\Domain\CsvImport\Services\TableBuilder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Unit\TestCase;
 
@@ -39,17 +43,17 @@ class CsvImportTest extends TestCase
     }
 
     /**
-     * Build the service with a mocked Integrations dependency.
+     * Build the service with a mocked Integrations dependency and the real reader and storage.
      */
     private function makeService(Integrations $integrationService): CsvImport
     {
-        return new CsvImport($integrationService);
+        $language = $this->make(Language::class, ['__' => fn (string $index, string $default = '') => $index.'|%s']);
+
+        return new CsvImport($integrationService, new FileReader(new TableBuilder($language), $language), new ImportFiles);
     }
 
-    public function test_process_upload_stores_records_and_builds_integration_from_header(): void
+    public function test_process_upload_keeps_the_rows_and_builds_the_integration_from_the_headings(): void
     {
-        session()->forget('csv_records');
-
         $captured = null;
         $integrationService = $this->make(Integrations::class, [
             'create' => function (object|array $object) use (&$captured) {
@@ -60,44 +64,54 @@ class CsvImportTest extends TestCase
         ]);
 
         $csv = "name,email,role\nAlice,alice@example.com,admin\nBob,bob@example.com,editor\n";
-        $file = $this->makeCsvUpload($csv);
+        $service = $this->makeService($integrationService);
 
-        $id = $this->makeService($integrationService)->processUpload($file);
+        $id = $service->processUpload($this->makeCsvUpload($csv));
 
-        // Returns the integration id from the service.
         $this->assertSame(77, $id);
 
-        // Integration model is built from the comma-joined header row.
+        // Headings are stored as JSON: a heading may contain a comma.
         $this->assertInstanceOf(Integration::class, $captured);
-        $this->assertSame('name,email,role', $captured->fields);
+        $this->assertSame('["name","email","role"]', $captured->fields);
 
-        // All data rows (excluding the header) are materialized into the session.
-        $records = session('csv_records');
+        // The rows live in a file named by the session, not in the session itself.
+        $this->assertTrue(ImportFiles::isId(session(CsvImport::SESSION_FILE)));
+        $this->assertNull(session('csv_records'));
+        $records = $service->geValues();
         $this->assertCount(2, $records);
         $this->assertSame('Alice', $records[0]['name']);
-        $this->assertSame('alice@example.com', $records[0]['email']);
-        $this->assertSame('Bob', $records[1]['name']);
         $this->assertSame('editor', $records[1]['role']);
+        $this->assertSame(['name', 'email', 'role'], $service->getFields());
     }
 
-    public function test_process_upload_persists_all_rows_not_an_exhausted_iterator(): void
+    public function test_a_new_upload_replaces_the_previous_one(): void
     {
-        // Regression test for the latent iterator-exhaustion bug: the session
-        // must contain the actual rows, not an empty set.
-        session()->forget('csv_records');
+        $service = $this->makeService($this->make(Integrations::class, ['create' => fn () => 1]));
 
-        $integrationService = $this->make(Integrations::class, [
-            'create' => fn () => 1,
-        ]);
+        $service->processUpload($this->makeCsvUpload("col\nfirst\n"));
+        $first = session(CsvImport::SESSION_FILE);
+        $service->processUpload($this->makeCsvUpload("col\nsecond\nthird\n"));
 
-        $csv = "col\nfirst\nsecond\nthird\n";
-        $file = $this->makeCsvUpload($csv);
+        $this->assertNull((new ImportFiles)->table($first), 'the earlier upload is removed');
+        $this->assertSame(['second', 'third'], array_column($service->geValues(), 'col'));
+    }
 
-        $this->makeService($integrationService)->processUpload($file);
+    public function test_the_person_can_read_the_upload_again_with_another_heading_row(): void
+    {
+        $patched = null;
+        $service = $this->makeService($this->make(Integrations::class, [
+            'create' => fn () => 5,
+            'patch' => function (int $id, array $params) use (&$patched) {
+                $patched = [$id, $params];
 
-        $records = session('csv_records');
-        $this->assertCount(3, $records);
-        $this->assertSame('first', $records[0]['col']);
-        $this->assertSame('third', $records[2]['col']);
+                return true;
+            },
+        ]));
+
+        $service->processUpload($this->makeCsvUpload("Report,Q4\nTitle,Owner\nOne,Ada\n"));
+        $table = $service->rereadUpload(5, null, 2);
+
+        $this->assertSame(['Title', 'Owner'], $table->headers);
+        $this->assertSame([5, ['fields' => '["Title","Owner"]']], $patched, 'the mapping step offers the new headings');
     }
 }

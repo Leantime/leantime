@@ -3,74 +3,200 @@
 @section('content')
 
 @php
-    $providerFields = $providerFields ?? [];
     $provider = $provider ?? null;
-    $leantimeFields = $leantimeFields ?? [];
-    $numberOfFields = $maxFields ?? 0;
-    $values = $values ?? [];
+    $review = $review ?? ['columns' => [], 'rows' => [], 'total' => 0, 'problemRows' => 0, 'hiddenRows' => 0, 'counts' => [], 'projects' => [], 'resolved' => false];
+    $generalProblems = $generalProblems ?? [];
     $flags = $flags ?? [];
-    $fields = $fields ?? [];
-    $urlAppend = '';
-    if (isset($integrationId) && is_numeric($integrationId)) {
-        $urlAppend = '&integrationId=' . $integrationId;
-    }
+    $integrationId = isset($integrationId) && is_numeric($integrationId) ? (int) $integrationId : null;
+    $needsFix = $flags !== [];
+    $counts = $review['counts'];
 @endphp
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    {!! __('headlines.integrations') !!} // {{ $provider->name }}
+    {{ __('headlines.integrations') }} / {{ $provider->name }}
 </x-global::layout.page-header>
 
 <div class="maincontent">
     <x-global::layout.content-box>
-        @include('connector::submodules.importProgress')
-    </x-global::layout.content-box>
-    <x-global::layout.content-box class="center">
+        @include('connector::submodules.importProgress', ['currentStep' => 'parse'])
+
         {!! $tpl->displayNotification() !!}
 
-        <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
+        <x-global::elements.section-header as="h4">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
 
-        @if (!empty($flags))
-            <p style="font-style: oblique">{{ __('text.integration_resolve_errors') }}</p>
-            <ul style="padding-left: 20px; margin-bottom: 20px;">
-                @php $messages = []; @endphp
-                @foreach ($flags as $flag)
-                    @if (!in_array($flag, $messages))
-                        <li style="margin-right: 10px; color: red; font-style: oblique;">{{ $flag }}</li>
-                        @php $messages[] = $flag; @endphp
-                    @endif
-                @endforeach
-            </ul>
-            <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
+        @if ($needsFix)
+            {{-- How many rows need a fix; problems about the whole file are listed here, the others sit in their cells. --}}
+            <x-global::feedback.alert tone="danger" :title="$review['problemRows'] > 0
+                ? sprintf(__($review['problemRows'] === 1 ? 'text.import_check_row_needs_fix' : 'text.import_check_rows_need_fix'), $review['problemRows'], $review['total'])
+                : __('text.import_check_file_needs_fix')">
+                {{ __('text.integration_resolve_errors') }}
+                @if ($generalProblems !== [])
+                    <ul>
+                        @foreach ($generalProblems as $problem)
+                            <li>{{ $problem }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+            </x-global::feedback.alert>
         @else
-            <x-global::forms.button tag="a" class="right" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
+            @php
+                // "3 new to-dos for Website Redesign. No problems found."
+                $kind = in_array($entity ?? '', ['tickets', 'milestones'], true) ? $entity : 'rows';
+                $parts = [];
+                foreach (['new', 'updates'] as $count) {
+                    if (($counts[$count] ?? 0) > 0) {
+                        $parts[] = sprintf(__('text.import_check_'.$count.'_'.$kind.($counts[$count] === 1 ? '_one' : '')), number_format($counts[$count]));
+                    }
+                }
+                $summary = count($parts) === 2 ? sprintf(__('text.import_check_and'), $parts[0], $parts[1]) : ($parts[0] ?? '');
+                if (count($review['projects']) === 1) {
+                    $summary = sprintf(__('text.import_check_for'), $summary, $review['projects'][0]);
+                } elseif (count($review['projects']) > 1) {
+                    $summary = sprintf(__('text.import_check_for_projects'), $summary, count($review['projects']));
+                }
+            @endphp
+            <div class="lt-lead">
+                <strong>{{ sprintf(__('text.import_check_no_problems'), $summary) }}</strong>
+                @if ($review['resolved'])
+                    <br />{{ __('text.integration_importing') }}
+                @endif
+            </div>
+            @if ($review['hiddenRows'] > 0)
+                {{-- A long file: the table shows the first rows, the counts cover all of them. --}}
+                <div class="lt-import-summary">
+                    @if (($counts['assigned'] ?? 0) > 0)
+                        <x-global::elements.badge>{{ sprintf(__('text.import_badge_assigned'), number_format($counts['assigned'])) }}</x-global::elements.badge>
+                    @endif
+                    @if (($counts['unassigned'] ?? 0) > 0)
+                        <x-global::elements.badge tone="muted">{{ sprintf(__('text.import_badge_unassigned'), number_format($counts['unassigned'])) }}</x-global::elements.badge>
+                    @endif
+                </div>
+            @endif
         @endif
-        <div class="clearall"></div>
 
-        <p>{{ __('text.integration_importing') }}</p>
-        <br />
-
-        <table width="100%">
-            <thead>
-            <tr>
-                @foreach ($fields as $sourceField => $leantimeField)
-                    <th>{{ $leantimeField['leantimeField'] }}</th>
+        {{-- One choice changes every row with the same value (a person, a priority, a project, an empty due date). --}}
+        @php
+            $fixChoices = $fixChoices ?? ['open' => [], 'applied' => []];
+            $matchParams = $matchParams ?? [];
+        @endphp
+        @if ($fixChoices['open'] !== [] || $fixChoices['applied'] !== [])
+            <form method="post" action="{{ $provider->stepUrl('parse', $integrationId) }}" class="lt-import-fixes">
+                @foreach ($matchParams as $name => $value)
+                    <input type="hidden" name="{{ $name }}" value="{{ $value }}" />
                 @endforeach
-            </tr>
-            </thead>
-            <tbody>
-            @foreach ($values as $record)
+
+                <x-global::elements.section-header as="h5" :description="__('text.import_fix')">{{ __('headlines.import_fix') }}</x-global::elements.section-header>
+
+                @if ($fixChoices['applied'] !== [])
+                    <ul class="lt-import-fixes-applied">
+                        @foreach ($fixChoices['applied'] as $fix)
+                            <li>
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][column]" value="{{ $fix['column'] }}" />
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][from]" value="{{ $fix['from'] }}" />
+                                <input type="hidden" name="fixes[{{ $fix['key'] }}][to]" value="{{ $fix['to'] }}" />
+                                <i class="fa fa-circle-check" aria-hidden="true"></i>
+                                {{ sprintf(__('text.import_fix_applied'), $fix['label'], $fix['toLabel']) }}
+                                <x-global::forms.button inputType="submit" contentRole="link" name="undoFix" value="{{ $fix['key'] }}">{{ __('buttons.import_fix_undo') }}</x-global::forms.button>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+
+                @foreach ($fixChoices['open'] as $choice)
+                    <input type="hidden" name="fixes[{{ $choice['key'] }}][column]" value="{{ $choice['column'] }}" />
+                    <input type="hidden" name="fixes[{{ $choice['key'] }}][from]" value="{{ $choice['from'] }}" />
+                    <x-global::forms.field layout="inline" :labelWidth="300" for="fix-{{ $choice['key'] }}" :label="$choice['label']"
+                        :help="sprintf(__($choice['rows'] === 1 ? 'text.import_fix_rows_one' : 'text.import_fix_rows'), number_format($choice['rows']))">
+                        @if ($choice['kind'] === 'date')
+                            <x-global::forms.date-picker name="fixes[{{ $choice['key'] }}][to]" id="fix-{{ $choice['key'] }}" />
+                        @else
+                            <x-global::forms.select name="fixes[{{ $choice['key'] }}][to]" id="fix-{{ $choice['key'] }}" width="md">
+                                <option value="">{{ __('label.import_choose') }}</option>
+                                @foreach ($choice['options'] as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </x-global::forms.select>
+                        @endif
+                    </x-global::forms.field>
+                @endforeach
+
+                @if ($fixChoices['open'] !== [])
+                    <x-global::forms.button inputType="submit" contentRole="secondary">{{ __('buttons.import_fix_apply') }}</x-global::forms.button>
+                @endif
+            </form>
+        @endif
+
+        {{-- One column per matched column of the file, under its Leantime field. The row number is the spreadsheet's. --}}
+        @if ($review['rows'] !== [])
+            <div class="tw-overflow-x-auto">
+            <table class="table table-bordered lt-import-check">
+                <thead>
                 <tr>
-                    @foreach ($record as $value)
-                        <td>{{ $value }}</td>
+                    <th>{{ __('label.import_row') }}</th>
+                    @foreach ($review['columns'] as $column)
+                        <th>
+                            {{ $column['name'] }}
+                            @if ($column['notInFile'] !== null)
+                                <span class="lt-cell-note">{{ __('text.import_column_not_in_file') }} <x-global::elements.info-tip :text="$column['notInFile']" /></span>
+                            @elseif (strcasecmp($column['name'], $column['source']) !== 0)
+                                <span class="lt-cell-note">{{ sprintf(__('text.import_column_from'), $column['source']) }}</span>
+                            @endif
+                        </th>
                     @endforeach
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
-        <br />
+                </thead>
+                <tbody>
+                @foreach ($review['rows'] as $row)
+                    <tr>
+                        <td>{{ $row['row'] }}</td>
+                        @foreach ($row['cells'] as $cell)
+                            <td @class(['lt-cell--problem' => $cell['problems'] !== []])>
+                                @if ($cell['userId'])
+                                    <span class="lt-import-person">
+                                        <x-global::elements.avatar :userId="$cell['userId']" :name="$cell['value']" size="sm" />
+                                        {{ $cell['value'] }}
+                                    </span>
+                                @elseif ($cell['muted'])
+                                    <span class="lt-cell-note">{{ $cell['value'] }}</span>
+                                @elseif ($cell['value'] === '' && $cell['problems'] !== [])
+                                    <span class="lt-cell-note">{{ __('text.import_value_empty') }}</span>
+                                @else
+                                    {{ $cell['value'] }}
+                                @endif
+                                @if ($cell['note'])
+                                    <span class="lt-cell-note">{{ $cell['note'] }}</span>
+                                @endif
+                                @foreach ($cell['problems'] as $problem)
+                                    <span class="lt-cell-problem"><i class="fa fa-circle-exclamation" aria-hidden="true"></i> {{ $problem }}</span>
+                                @endforeach
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+            </div>
+        @endif
 
-        <div class="clearall"></div>
+        @if ($review['hiddenRows'] > 0)
+            <p class="lt-cell-note">
+                {{ $needsFix
+                    ? sprintf(__('text.import_check_hidden_fine'), $review['hiddenRows'])
+                    : sprintf(__('text.import_check_hidden_more'), count($review['rows']), $review['total']) }}
+            </p>
+        @endif
 
+        {{-- Back to the matching, and Import only when nothing needs a fix. --}}
+        <form method="post" action="{{ $provider->stepUrl('import', $integrationId) }}" class="lt-form-actions">
+            <x-global::forms.button tag="a" :link="$provider->stepUrl('fields', $integrationId)" contentRole="tertiary">{{ __($needsFix ? 'buttons.import_back_to_matching' : 'buttons.back') }}</x-global::forms.button>
+            @if ($needsFix)
+                <x-global::forms.button tag="a" :link="$provider->stepUrl('connect')" contentRole="secondary">{{ __('buttons.import_upload_fixed') }}</x-global::forms.button>
+            @else
+                {{-- Ties Import to this review: an Import from an older review imports nothing. --}}
+                <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
+                <x-global::forms.button inputType="submit" contentRole="primary">{{ sprintf(__('buttons.import_n_'.(in_array($entity ?? '', ['tickets', 'milestones'], true) ? $entity : 'rows').($review['total'] === 1 ? '_one' : '')), number_format($review['total'])) }}</x-global::forms.button>
+            @endif
+        </form>
     </x-global::layout.content-box>
 </div>
 

@@ -5,11 +5,16 @@ namespace Leantime\Domain\Connector\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
+use Leantime\Domain\Connector\Services\ReviewFixes;
+use Leantime\Domain\Connector\Services\ReviewTable;
+use Leantime\Domain\CsvImport\Services\Presets;
+use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
 
 class Integration extends Controller
@@ -20,17 +25,36 @@ class Integration extends Controller
 
     private Connector $connectorService;
 
+    private Projects $projectService;
+
+    private ReviewTable $reviewTable;
+
+    private ReviewFixes $reviewFixes;
+
+    private Presets $presets;
+
+    /** Entities whose rows go into a project, so the matching step offers a project for all rows. */
+    private const PROJECT_ENTITIES = ['tickets', 'milestones'];
+
     /**
      * Initializes dependencies.
      */
     public function init(
         Providers $providerService,
         IntegrationService $integrationService,
-        Connector $connectorService
+        Connector $connectorService,
+        Projects $projectService,
+        ReviewTable $reviewTable,
+        ReviewFixes $reviewFixes,
+        Presets $presets
     ): void {
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
+        $this->projectService = $projectService;
+        $this->reviewTable = $reviewTable;
+        $this->reviewFixes = $reviewFixes;
+        $this->presets = $presets;
     }
 
     /**
@@ -114,7 +138,12 @@ class Integration extends Controller
         }
 
         if ($params['step'] == 'import') {
-            return $this->handleImportStep();
+            // Importing writes data, so it only runs from the review step's Confirm form (POST).
+            if (! $this->incomingRequest->isMethod('POST')) {
+                return Frontcontroller::redirect($provider->stepUrl('connect'));
+            }
+
+            return $this->handleImportStep($provider);
         }
 
         return new Response;
@@ -134,12 +163,25 @@ class Integration extends Controller
         if ($entity === null) {
             $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
 
-            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id.'');
+            return Frontcontroller::redirect($provider->stepUrl('connect', $currentIntegration->id ? (int) $currentIntegration->id : null));
         }
 
-        $this->tpl->assign('providerFields', $this->integrationService->resolveProviderFields($currentIntegration, $provider));
-        $this->tpl->assign('flags', $this->connectorService->getEntityFlags($entity));
+        $providerFields = $this->integrationService->resolveProviderFields($currentIntegration, $provider);
+        $this->tpl->assign('providerFields', $providerFields);
+        $this->tpl->assign('examples', $this->firstValues($provider, $providerFields));
+        $this->tpl->assign('entity', $entity);
+        $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
+        $this->tpl->assign('guide', $this->connectorService->getEntityGuide($entity));
+
+        // A file from a tool Leantime knows is said so; its matching is only filled in after one click.
+        $preset = $this->presets->recognise(array_map('strval', $providerFields), $entity);
+        $suggest = (bool) $this->incomingRequest->query->get('suggest', false);
+        $this->tpl->assign('preset', $preset);
+        $this->tpl->assign('suggested', $suggest ? $this->presets->suggest(array_map('strval', $providerFields), $this->integrationService->getEntityFields($entity), $preset, $entity) : null);
+        $this->tpl->assign('leftovers', array_map('mb_strtolower', (array) ($preset['leftovers'] ?? [])));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
+        // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
+        $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectsByName() : []);
 
         return $this->tpl->display('connector.integrationFields');
     }
@@ -154,28 +196,136 @@ class Integration extends Controller
     {
         $values = $provider->geValues();
         $fields = $this->connectorService->getFieldMappings($params);
-        $flags = $this->connectorService->parseValues($fields, $values, session('currentImportEntity'));
+        $projectId = is_numeric($params['importProjectId'] ?? null) ? (int) $params['importProjectId'] : null;
+        $entity = (string) session('currentImportEntity');
+        // Matched for the person from a preset: its value translations start as choices they can undo.
+        if (! empty($params['presetId']) && ! isset($params['fixes'])) {
+            $preset = $this->presets->all()[(string) $params['presetId']] ?? null;
+            foreach ($preset !== null ? $this->presets->valueChoices($preset, $fields, $values) : [] as $choice) {
+                $params['fixes'][ReviewFixes::fixKey($choice['column'], $choice['from'])] = $choice;
+            }
+        }
 
-        $this->tpl->assign('values', $values);
-        $this->tpl->assign('fields', $fields);
+        // Choices from the check step change every row with the same value; the file stays as it is.
+        $fixes = $this->reviewFixes->fromRequest($params);
+        $flags = $this->connectorService->parseValues($fields, $this->reviewFixes->apply($values, $fixes), $entity, $projectId);
+        $flags = is_array($flags) ? $flags : [];
+        $problems = $this->connectorService->reviewProblems($flags);
+        $leantimeFields = $this->integrationService->getEntityFields($entity);
+
+        $this->tpl->assign('entity', $entity);
+        $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
         $this->tpl->assign('flags', $flags);
+        $this->tpl->assign('generalProblems', $problems['general']);
+        $this->tpl->assign('review', $this->reviewTable->build($entity, $fields, $values, $this->connectorService->reviewedValues(), $problems, $leantimeFields));
+        $this->tpl->assign('fixChoices', $this->reviewFixes->choices($entity, $fields, $values, $problems['fixable'], $fixes, $leantimeFields));
+        // The matching is sent again with the choices, so the check runs on the same columns.
+        $this->tpl->assign('matchParams', array_filter(
+            $params,
+            fn ($value, $name) => is_string($value) && (str_starts_with((string) $name, 'field_') || $name === 'importProjectId'),
+            ARRAY_FILTER_USE_BOTH
+        ));
+        $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');
     }
 
     /**
-     * Handles the final import execution step.
+     * Handles the final import execution step and shows what was and wasn't imported.
+     *
+     * @param  object  $provider  Provider instance
      */
-    private function handleImportStep(): Response
+    private function handleImportStep(object $provider): Response
     {
-        $payload = $this->integrationService->getCachedImportPayload();
+        // Claimed once: a reload, a second Confirm or a parallel request gets nothing, so the
+        // rows can't be imported twice. The review step only stores rows it didn't flag.
+        $payload = $this->integrationService->claimCachedImportPayload((string) $this->incomingRequest->request->get('importToken', ''));
 
-        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], session('currentImportEntity'));
+        // Nothing to import: the rows were already imported, the review flagged them, another
+        // tab reviewed something else since, or the session expired. Start over instead.
+        if (empty($payload['values']) || empty($payload['fields'])) {
+            $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
-        if ($result !== true) {
-            $this->tpl->setNotification(sprintf($this->language->__('notification.import_problem'), $result), 'error');
+            return Frontcontroller::redirect($provider->stepUrl('connect'));
         }
 
+        // A large file can take longer than a small server's default limit; raise it where allowed.
+        if (function_exists('set_time_limit')) {
+            set_time_limit(300);
+        }
+
+        // The entity that was reviewed, not the one currently picked (another tab may have changed it).
+        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], $payload['entity']);
+
+        if (! $result instanceof ImportResult) {
+            $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
+
+            return Frontcontroller::redirect($provider->stepUrl('connect'));
+        }
+
+        $this->tpl->assign('importResult', $result);
+        $this->tpl->assign('importedEntity', (string) $payload['entity']);
+        $this->tpl->assign('importedProjects', $this->projectsOf($payload['values']));
+
         return $this->tpl->display('connector.integrationConfirm');
+    }
+
+    /**
+     * The projects the imported rows went into, by id.
+     *
+     * @param  array<int, array<string, mixed>>  $rows  The imported rows (to-dos and milestones carry projectId).
+     * @return array<int, string> Project id => name.
+     */
+    private function projectsOf(array $rows): array
+    {
+        $projects = [];
+        foreach ($rows as $row) {
+            $projectId = (int) ($row['projectId'] ?? 0);
+            if ($projectId > 0 && ! isset($projects[$projectId])) {
+                $project = $this->projectService->getProject($projectId);
+                $projects[$projectId] = is_array($project) ? (string) $project['name'] : (string) $projectId;
+            }
+        }
+
+        return $projects;
+    }
+
+    /**
+     * The first filled value of each column, so the matching step shows what a column holds.
+     *
+     * @param  object  $provider  Provider instance.
+     * @param  array<int, string>  $headings  The columns of the file.
+     * @return array<string, string> Heading => first value ('' when the column is empty).
+     */
+    private function firstValues(object $provider, array $headings): array
+    {
+        $rows = method_exists($provider, 'geValues') ? (array) $provider->geValues() : [];
+        $examples = array_fill_keys(array_map('strval', $headings), '');
+
+        foreach ($rows as $row) {
+            foreach ($examples as $heading => $example) {
+                if ($example === '' && trim((string) ($row[$heading] ?? '')) !== '') {
+                    $examples[$heading] = trim((string) $row[$heading]);
+                }
+            }
+            if (! in_array('', $examples, true)) {
+                break;
+            }
+        }
+
+        return $examples;
+    }
+
+    /**
+     * The projects the importer can choose for rows that name none, by name.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function projectsByName(): array
+    {
+        $projects = $this->projectService->getAllProjects();
+        usort($projects, fn (array $a, array $b) => strnatcasecmp((string) $a['name'], (string) $b['name']));
+
+        return $projects;
     }
 }

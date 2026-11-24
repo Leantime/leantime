@@ -1,51 +1,15 @@
 @php
-    $currentStep = $_GET['step'] ?? 'connect';
-
-    $totalSteps = count($provider->steps);
-    $completed = $provider->stepDetails[$currentStep]['position'];
-    $halfStep = (1 / $totalSteps * 100) / 2;
-    $percentDone = ($completed / $totalSteps) * 100 - $halfStep;
-
-    $i = 0;
+    // Where the import is, from the provider's own steps. The result page marks every step done.
+    $steps = array_values($provider->steps);
+    $currentStep = $currentStep ?? ($_GET['step'] ?? 'connect');
+    $index = array_search($currentStep, $steps, true);
+    $position = $index === false ? 1 : $index + 1;
+    if (! empty($allStepsDone)) {
+        $position = count($steps) + 1;
+    }
 @endphp
-<br />
-<div class="projectSteps">
-    <div class="progressWrapper">
-        <div class="progress">
-            <div
-                id="progressChecklistBar"
-                class="progress-bar progress-bar-success tx-transition"
-                role="progressbar"
-                aria-valuenow="0"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: {{ $percentDone }}%"
-            ><span class="sr-only"></span></div>
-        </div>
-
-        @foreach ($provider->steps as $step)
-            @php
-                $i++;
-                $stepClass = '';
-                if ($currentStep == $step) {
-                    $stepClass = 'current';
-                }
-                if ($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position']) {
-                    $stepClass = 'complete';
-                }
-            @endphp
-
-        <div class="step {{ $stepClass }}" style="left: {{ ($i / $totalSteps * 100) - $halfStep }}%;">
-            <a href="javascript:void(0)">
-                <span class="innerCircle"></span>
-                <span class="title">
-                    @if ($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position'])
-                     <i class="fa fa-check"></i>
-                    @endif
-                            {{ $provider->stepDetails[$step]['title'] }}
-                        </span>
-            </a>
-        </div>
-        @endforeach
-    </div>
-</div>
+<x-global::navigation.steps
+    class="lt-import-steps"
+    :steps="array_map(fn (string $step) => __($provider->stepDetails[$step]['title'] ?? $step), $steps)"
+    :current="$position"
+    :label="__('label.import_progress')" />
