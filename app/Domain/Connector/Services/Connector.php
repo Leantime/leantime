@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
+use Leantime\Domain\Notifications\Services\BulkNotifications;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Services\Users;
@@ -604,6 +605,18 @@ class Connector
         return $flags;
     }
 
+    /**
+     * Saves the reviewed rows of one import.
+     *
+     * To-do notifications are held while the rows are saved and sent as one summary per
+     * project afterwards (see BulkNotifications), so an import doesn't notify the team once
+     * per row.
+     *
+     * @param  array  $fields  Column mappings (sourceField, leantimeField).
+     * @param  array  $values  Rows as returned by the parse step.
+     * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
+     * @return mixed What the entity's importer returned, or false for an unknown entity.
+     */
     public function importValues($fields, $values, $entity)
     {
 
@@ -613,21 +626,24 @@ class Connector
             array_push($finalMappings, $field['leantimeField']);
         }
 
-        if ($entity == 'tickets') {
-            return $this->importTickets($finalMappings, $values);
-        } elseif ($entity == 'projects') {
-            return $this->importProjects($finalMappings, $values);
-        } elseif ($entity == 'users') {
-            return $this->importUsers($finalMappings, $values);
-        } elseif ($entity == 'ideas') {
-            return $this->importIdeas($finalMappings, $values);
-        } elseif ($entity == 'goals') {
-            return $this->importGoals($finalMappings, $values);
-        } elseif ($entity == 'milestones') {
-            return $this->importMilestones($finalMappings, $values);
-        }
+        // One summary per project instead of a notification per row (see BulkNotifications).
+        return (new BulkNotifications)->hold(function () use ($entity, $finalMappings, $values) {
+            if ($entity == 'tickets') {
+                return $this->importTickets($finalMappings, $values);
+            } elseif ($entity == 'projects') {
+                return $this->importProjects($finalMappings, $values);
+            } elseif ($entity == 'users') {
+                return $this->importUsers($finalMappings, $values);
+            } elseif ($entity == 'ideas') {
+                return $this->importIdeas($finalMappings, $values);
+            } elseif ($entity == 'goals') {
+                return $this->importGoals($finalMappings, $values);
+            } elseif ($entity == 'milestones') {
+                return $this->importMilestones($finalMappings, $values);
+            }
 
-        return false;
+            return false;
+        });
     }
 
     private function importTickets($finalMappings, $finalValues)
