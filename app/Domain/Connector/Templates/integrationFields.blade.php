@@ -44,13 +44,15 @@
                             <tr>
                                 <td class="center">{{ $entity }}</td>
                                 <td class="center">
+                                    {{-- "Don't map" comes first: a column whose name doesn't match a field stays unmapped
+                                         instead of falling to the first field (Id), which would update existing items. --}}
                                     <x-global::forms.select class="form-control" name="field_{{ md5($entity) }}">
+                                        <option value="">{{ __('label.dont_map') }}</option>
                                         @foreach ($leantimeFields as $key2 => $fields)
                                             <option value="{{ $entity }}|{{ $key2 }}" {{ ($entity == $fields['name'] && !in_array($key2, ['id', 'itemId'])) ? "selected='selected'" : '' }}>
                                                 {{ $fields['name'] }}
                                             </option>
                                         @endforeach
-                                        <option value="">{{ __('label.dont_map') }}</option>
                                     </x-global::forms.select>
                                 </td>
                             </tr>

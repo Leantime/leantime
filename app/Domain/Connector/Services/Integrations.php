@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Connector\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
@@ -203,5 +204,65 @@ class Integrations
             'values' => safe_unserialize(session('serValues'), []),
             'fields' => safe_unserialize(session('serFields'), []),
         ];
+    }
+
+    /**
+     * The token of the rows the last review stored, for the review page's Confirm form.
+     *
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function getCachedImportToken(): string
+    {
+        return (string) session('serImportToken', '');
+    }
+
+    /**
+     * Hands out the reviewed import payload once, to the Confirm of the review that stored it.
+     *
+     * The review step stores a token with the rows and puts it in its Confirm form. The rows
+     * are handed out only when the submitted token matches, so a Confirm from an older review
+     * (another tab reviewed something else since) imports nothing. The first request to claim
+     * the token gets the rows; any other (a double click, a reload, a parallel request) gets
+     * nothing, even when it read the session before the first one cleared it, because the
+     * claim is an atomic cache add.
+     *
+     * @api
+     *
+     * @param  string  $token  The token the Confirm form submitted.
+     * @return array{values: array, fields: array, entity: string} The rows, their mappings and
+     *                                                             the reviewed entity; empty when
+     *                                                             there is nothing to import.
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function claimCachedImportPayload(string $token): array
+    {
+        $nothing = ['values' => [], 'fields' => [], 'entity' => ''];
+        $payload = $this->getCachedImportPayload();
+        $storedToken = $this->getCachedImportToken();
+
+        if ($storedToken === '' || ! hash_equals($storedToken, $token) || empty($payload['values']) || empty($payload['fields'])) {
+            return $nothing;
+        }
+
+        if (! Cache::add('connector.importClaimed.'.$storedToken, true, now()->addDay())) {
+            return $nothing;
+        }
+
+        $payload['entity'] = (string) session('serImportEntity', '');
+        $this->forgetCachedImportPayload();
+
+        return $payload;
+    }
+
+    /**
+     * Clears the cached import payload and its token.
+     *
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function forgetCachedImportPayload(): void
+    {
+        session()->forget(['serValues', 'serFields', 'serImportEntity', 'serImportToken']);
     }
 }
