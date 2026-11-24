@@ -27,20 +27,14 @@
 
         <x-global::elements.section-header as="h5">{{ __('headlines.import_file_found') }}</x-global::elements.section-header>
 
-        {{-- What was found, in one line: format · sheet · rows · heading row · columns --}}
-        <p style="font-size: var(--font-size-l); margin: 10px 0;">
-            @if ($table->format === 'xlsx')
-                {{ __('label.import_format_excel') }}
-                @if ($table->sheetName() !== null)
-                    · {{ sprintf(__('label.import_sheet_named'), $table->sheetName()) }}
-                @endif
-            @else
-                {{ sprintf(__('label.import_format_csv'), $delimiterNames[$table->delimiter] ?? $table->delimiter) }}
-            @endif
-            · {{ $table->rowCount() === 1 ? __('label.import_row_count_one') : sprintf(__('label.import_row_count'), number_format($table->rowCount())) }}
-            · {{ sprintf(__('label.import_heading_row'), $table->headerRow) }}
-            · {{ sprintf(__('label.import_column_count'), count($columns)) }}
-        </p>
+        {{-- What was found. The sheet and the heading row are in the form below, where they can be changed. --}}
+        <x-global::elements.details-list layout="inline" :items="[
+            __('label.import_file_type') => $table->format === 'xlsx'
+                ? __('label.import_format_excel')
+                : sprintf(__('label.import_format_csv'), $delimiterNames[$table->delimiter] ?? $table->delimiter),
+            __('label.import_rows') => number_format($table->rowCount()),
+            __('label.import_columns') => number_format(count($columns)),
+        ]" />
 
         @if ($table->rowsAbove > 0)
             <x-global::feedback.alert tone="info">
@@ -51,32 +45,36 @@
         @endif
 
         @if ($largeFile)
-            <p>{{ __('text.import_large_file') }}</p>
+            <x-global::feedback.alert tone="warning">{{ __('text.import_large_file') }}</x-global::feedback.alert>
         @endif
 
         {{-- The person can correct the sheet and heading row; the file is read again. --}}
-        <form method="post" action="{{ BASE_URL }}/csvImport/preview?integrationId={{ $integrationId }}" style="margin: 15px 0;">
+        <form method="post" action="{{ BASE_URL }}/csvImport/preview?integrationId={{ $integrationId }}">
             @if (count($table->sheetNames) > 1)
-                <label for="sheetIndex" style="display:inline-block; margin-right: 5px;">{{ __('label.import_sheet') }}</label>
-                <select name="sheetIndex" id="sheetIndex" style="margin-right: 15px;">
-                    @foreach ($table->sheetNames as $index => $name)
-                        <option value="{{ $index }}" @if ($index === $table->sheetIndex) selected @endif>{{ $name }}</option>
-                    @endforeach
-                </select>
+                <x-global::forms.field layout="inline" for="sheetIndex" :label="__('label.import_sheet')">
+                    <x-global::forms.select name="sheetIndex" id="sheetIndex" width="md">
+                        @foreach ($table->sheetNames as $index => $name)
+                            <option value="{{ $index }}" @if ($index === $table->sheetIndex) selected @endif>{{ $name }}</option>
+                        @endforeach
+                    </x-global::forms.select>
+                </x-global::forms.field>
             @endif
 
-            <label for="headerRow" style="display:inline-block; margin-right: 5px;">{{ __('label.import_headings_on_row') }}</label>
-            <select name="headerRow" id="headerRow" style="margin-right: 15px;">
-                @for ($row = 1; $row <= \Leantime\Domain\CsvImport\Services\TableBuilder::HEADER_SCAN_ROWS; $row++)
-                    <option value="{{ $row }}" @if ($row === $table->headerRow) selected @endif>{{ $row }}</option>
-                @endfor
-            </select>
-
-            <x-global::forms.button inputType="submit" contentRole="secondary">{{ __('buttons.import_change') }}</x-global::forms.button>
+            <x-global::forms.field layout="inline" for="headerRow" :label="__('label.import_headings_on_row')">
+                <div class="lt-field-row">
+                    <x-global::forms.select name="headerRow" id="headerRow" width="sm">
+                        @for ($row = 1; $row <= \Leantime\Domain\CsvImport\Services\TableBuilder::HEADER_SCAN_ROWS; $row++)
+                            <option value="{{ $row }}" @if ($row === $table->headerRow) selected @endif>{{ $row }}</option>
+                        @endfor
+                    </x-global::forms.select>
+                    <x-global::forms.button inputType="submit" contentRole="secondary">{{ __('buttons.import_change') }}</x-global::forms.button>
+                </div>
+            </x-global::forms.field>
         </form>
 
         <x-global::elements.section-header as="h5">{{ __('headlines.import_first_rows') }}</x-global::elements.section-header>
-        <div style="overflow-x: auto; margin: 10px 0 20px;">
+        {{-- Wide files scroll sideways inside the box instead of widening the page. --}}
+        <div class="tw-overflow-x-auto tw-mb-4">
             <table class="table table-bordered">
                 <thead>
                     <tr>

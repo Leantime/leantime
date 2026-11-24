@@ -24,22 +24,19 @@
     <x-global::layout.content-box>
         @include('connector::submodules.importProgress')
     </x-global::layout.content-box>
-    <x-global::layout.content-box class="center">
+    <x-global::layout.content-box>
         {!! $tpl->displayNotification() !!}
 
         <x-global::elements.section-header as="h5">{{ __('headlines.integration_review') }}</x-global::elements.section-header>
 
         @if (!empty($flags))
-            <p style="font-style: oblique">{{ __('text.integration_resolve_errors') }}</p>
-            <ul style="padding-left: 20px; margin-bottom: 20px;">
-                @php $messages = []; @endphp
-                @foreach ($flags as $flag)
-                    @if (!in_array($flag, $messages))
-                        <li style="margin-right: 10px; color: red; font-style: oblique;">{{ $flag }}</li>
-                        @php $messages[] = $flag; @endphp
-                    @endif
-                @endforeach
-            </ul>
+            <x-global::feedback.alert tone="danger" :title="__('text.integration_resolve_errors')">
+                <ul>
+                    @foreach (array_unique($flags) as $flag)
+                        <li>{{ $flag }}</li>
+                    @endforeach
+                </ul>
+            </x-global::feedback.alert>
             <x-global::forms.button tag="a" class="pull-left" link="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=fields{{ $urlAppend }}" contentRole="tertiary">{{ __('links.go_back') }}</x-global::forms.button>
         @else
             <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}" class="right">
@@ -50,12 +47,13 @@
         @endif
         <div class="clearall"></div>
 
-        <p>{{ __('text.integration_importing') }}</p>
-        <br />
+        @if (empty($flags))
+            <p>{{ __('text.integration_importing') }}</p>
+        @endif
 
         {{-- One cell per mapped column, under its Leantime field; the row number is the spreadsheet's. --}}
-        <div style="overflow-x: auto;">
-        <table width="100%">
+        <div class="tw-overflow-x-auto tw-mb-4">
+        <table class="table table-bordered">
             <thead>
             <tr>
                 <th>{{ __('label.import_row') }}</th>
@@ -76,7 +74,6 @@
             </tbody>
         </table>
         </div>
-        <br />
 
         <div class="clearall"></div>
 
