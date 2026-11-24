@@ -28,6 +28,7 @@ use Leantime\Domain\Files\Services\Files;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Models\Notification;
+use Leantime\Domain\Notifications\Services\BulkNotifications;
 use Leantime\Domain\Notifications\Services\Messengers;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Notifications\Services\PushPreferences;
@@ -357,6 +358,10 @@ class Projects extends BaseService implements ChecksProjectAccess
 
     public function notifyProjectUsers(Notification $notification): void
     {
+        // During an import, to-do notifications are collected and sent as one summary per project.
+        if (BulkNotifications::record($notification)) {
+            return;
+        }
 
         // Filter notifications (dispatch_filter returns mixed; the filter preserves the entity)
         /** @var Notification $notification */

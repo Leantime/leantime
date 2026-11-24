@@ -2,15 +2,14 @@
 
 namespace Leantime\Domain\CsvImport\Services;
 
-use League\Csv\Exception as CsvException;
-use League\Csv\Reader;
-use League\Csv\Statement;
 use Leantime\Core\Controller\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Integration;
 use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
+use Leantime\Domain\CsvImport\Exceptions\ImportFileException;
+use Leantime\Domain\CsvImport\Models\ImportTable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,9 +22,9 @@ class CsvImport extends Provider implements ProviderIntegration
 
     public array $methods;
 
+    // The file step (upload and preview) also asks what each row is, so there is no entity step.
     public array $steps = [
         'connect',
-        'entity',
         'fields',
         'parse',
         'import',
@@ -33,7 +32,7 @@ class CsvImport extends Provider implements ProviderIntegration
 
     public array $button = [
         'url' => '',
-        'text' => 'Import CSV',
+        'text' => 'Import CSV or Excel',
     ];
 
     /**
@@ -41,13 +40,22 @@ class CsvImport extends Provider implements ProviderIntegration
      *
      * @param  Integrations  $integrationService  Connector integrations service used to persist the integration.
      */
-    public function __construct(private Integrations $integrationService)
-    {
+    /** Session key of the current upload's file id. */
+    public const SESSION_FILE = 'csvImporter.fileId';
+
+    /** The import docs page. */
+    public const DOCS_URL = 'https://docs.leantime.io/using-leantime/import-csv';
+
+    public function __construct(
+        private Integrations $integrationService,
+        private FileReader $fileReader,
+        private ImportFiles $importFiles,
+    ) {
 
         $this->id = 'csv_importer';
-        $this->name = 'CSV Import';
+        $this->name = 'CSV & Excel Import';
         $this->image = '/dist/images/svg/csv-icon.svg';
-        $this->description = "Import data from a CSV file. To learn more about the CSV format, please visit our <a href='https://support.leantime.io/en/article/importing-data-via-csv-1v941gy' target='_blank'>documentation</a>";
+        $this->description = "Import data from a CSV or Excel file. To learn more, see our <a href='".self::DOCS_URL."' target='_blank'>documentation</a>";
 
         $this->methods[] = 'import, update';
 
@@ -59,7 +67,28 @@ class CsvImport extends Provider implements ProviderIntegration
             ],
         ];
 
-        $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
+        $this->button['url'] = BASE_URL.'/csvImport/upload';
+
+        $this->stepDetails['connect']['title'] = 'label.import_step_file';
+        $this->stepDetails['fields']['title'] = 'label.import_step_match';
+        $this->stepDetails['import']['title'] = 'label.import_step_done';
+    }
+
+    /**
+     * The file step is the upload page, or the file's preview once there is one.
+     *
+     * @param  string  $step  A step of $steps.
+     * @param  int|null  $integrationId  The upload's integration record, if there is one.
+     */
+    public function stepUrl(string $step, ?int $integrationId = null): string
+    {
+        if ($step === 'connect') {
+            return $integrationId !== null
+                ? BASE_URL.'/csvImport/preview?integrationId='.$integrationId
+                : BASE_URL.'/csvImport/upload';
+        }
+
+        return parent::stepUrl($step, $integrationId);
     }
 
     // Logic to connect to provider goes here.
@@ -69,7 +98,7 @@ class CsvImport extends Provider implements ProviderIntegration
     {
         // Connection done. Send to next step.
         // May just want to add a nextStep() method to provider model or so.
-        return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload');
+        return Frontcontroller::redirect(BASE_URL.'/csvImport/upload');
     }
 
     // Sync the entities from the db
@@ -90,7 +119,7 @@ class CsvImport extends Provider implements ProviderIntegration
      */
     public function getFields(): mixed
     {
-        return session('csvImporter.headers') ?? [];
+        return $this->currentTable()->headers ?? [];
     }
 
     public function setFields(array $fields): void {}
@@ -102,70 +131,102 @@ class CsvImport extends Provider implements ProviderIntegration
     }
 
     /**
-     * @return array<int, mixed>|false
+     * The rows of the current upload (a CSV or Excel file is one entity, its sheet).
+     *
+     * @return array<int, array<string, string>>|false
      */
     public function getValues(Entity $Entity): mixed
     {
-        $integrationMeta = session('csvImporter.meta', '');
-
-        if (empty($integrationMeta)) {
-            return false;
-        }
-
-        $rows = safe_unserialize($integrationMeta, []);
-
-        // Removing the first row if it contains headers
-        // can be returned or dealt with later on for field matching
-        if (count($rows) > 0) {
-            $headers = array_shift($rows);
-        }
-
-        return $rows;
-    }
-
-    public function geValues()
-    {
-
-        return session('csv_records') ?? [];
+        return $this->currentTable()->rows ?? false;
     }
 
     /**
-     * Parse an uploaded CSV file, store its records in the session and create a
-     * Connector integration record built from the CSV header.
+     * The rows of the current upload, each with its sheet row number (ImportTable::ROW_KEY).
      *
-     * Reads the uploaded CSV (with the first row as header), materializes all
-     * records into the session under the `csv_records` key, builds an
-     * Integration model whose `fields` are the comma separated header columns
-     * and persists it via the Connector integrations service.
+     * @return array<int, array<string, string>>
+     */
+    public function geValues()
+    {
+        return $this->currentTable()->rows ?? [];
+    }
+
+    /**
+     * The table of the current upload, or null when there is none (or it was cleaned up).
+     *
+     * @api
+     */
+    public function currentTable(): ?ImportTable
+    {
+        $id = session(self::SESSION_FILE);
+
+        return ImportFiles::isId($id) ? $this->importFiles->table($id) : null;
+    }
+
+    /**
+     * Reads an uploaded file, keeps it for the next steps and creates the Connector
+     * integration record with its headings.
+     *
+     * Any format FileReader reads works: CSV, TSV, text and Excel (.xlsx). The upload replaces
+     * the session's previous one.
      *
      * @api
      *
-     * @param  UploadedFile  $file  The uploaded CSV file.
+     * @param  UploadedFile  $file  The uploaded file.
      * @return int The id of the created integration record.
      *
-     * @throws CsvException When the CSV cannot be parsed.
+     * @throws ImportFileException When the file can't be read; the message is for the person.
      */
     public function processUpload(UploadedFile $file): int
     {
-        $csv = Reader::createFromPath($file->getRealPath(), 'r');
-        $csv->setHeaderOffset(0);
+        $table = $this->fileReader->read($file->getRealPath());
+        $table->fileName = $file->getClientOriginalName();
 
-        // Will throw a League\Csv\Exception if the CSV is malformed.
-        $records = Statement::create()->process($csv);
-
-        $header = $records->getHeader();
-
-        $rows = [];
-        foreach ($records as $record) {
-            $rows[] = $record;
+        $previous = session(self::SESSION_FILE);
+        if (ImportFiles::isId($previous)) {
+            $this->importFiles->delete($previous);
         }
 
-        // Temporarily store the parsed records in the session for later steps.
-        session(['csv_records' => $rows]);
+        session([self::SESSION_FILE => $this->importFiles->store($file->getRealPath(), $table)]);
 
         $integration = new Integration;
-        $integration->fields = implode(',', $header);
+        $integration->fields = $this->encodeFields($table->headers);
 
         return (int) $this->integrationService->create($integration);
+    }
+
+    /**
+     * Reads the current upload again with another sheet or heading row.
+     *
+     * @api
+     *
+     * @param  int  $integrationId  The upload's integration record, whose headings are updated.
+     * @param  int|null  $sheetIndex  Excel sheet to read; null keeps the detected one.
+     * @param  int|null  $headerRow  Row the headings are on; null to find it.
+     *
+     * @throws ImportFileException When there is no upload or that sheet or row can't be used.
+     */
+    public function rereadUpload(int $integrationId, ?int $sheetIndex, ?int $headerRow): ImportTable
+    {
+        $id = session(self::SESSION_FILE);
+        if (! ImportFiles::isId($id) || ! is_file($this->importFiles->sourcePath($id))) {
+            throw new ImportFileException(__('notification.import_file_gone'));
+        }
+
+        $table = $this->fileReader->read($this->importFiles->sourcePath($id), $sheetIndex, $headerRow);
+        $table->fileName = $this->importFiles->table($id)?->fileName;
+        $this->importFiles->saveTable($id, $table);
+        $this->integrationService->patch($integrationId, ['fields' => $this->encodeFields($table->headers)]);
+
+        return $table;
+    }
+
+    /**
+     * Headings as stored on the integration record: JSON, because headings may contain commas.
+     *
+     * @param  array<int, string>  $headers
+     */
+    private function encodeFields(array $headers): string
+    {
+        return json_encode(array_values($headers), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
 }

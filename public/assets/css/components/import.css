@@ -1,0 +1,103 @@
+/* CSV & Excel import (Connector + CsvImport steps). */
+
+/* The step bar sits at the top of the step's content box, above a divider. */
+.lt-import-steps {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--main-border-color);
+}
+
+/* File step: the one-line summary of the file opens the sheet and heading-row settings. */
+.lt-import-file {
+    margin: -4px 0 20px;
+}
+
+.lt-import-file > summary {
+    display: inline;
+    cursor: pointer;
+    list-style: none;
+}
+
+.lt-import-file > summary::-webkit-details-marker {
+    display: none;
+}
+
+.lt-import-file-change {
+    color: var(--primary-color);
+}
+
+.lt-import-file > summary:hover .lt-import-file-change {
+    text-decoration: underline;
+}
+
+.lt-import-file-form {
+    margin-top: 12px;
+}
+
+/* The question of a step (what each row is, which project) sits apart from the table below it. */
+.lt-import-question {
+    margin-bottom: 24px;
+}
+
+/* Help under the upload area. */
+.lt-import-help {
+    margin-top: 12px;
+}
+
+/* Check step: counts for long files, people with their avatar. */
+.lt-import-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: -8px 0 16px;
+}
+
+.lt-import-person {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Done: the success mark is green, not the muted empty-state grey. */
+.lt-import-done .lt-empty-icon {
+    color: var(--green);
+}
+
+/* Check step: a header's note ("Not in your file (?)", "from …") stays on one line. */
+.lt-import-check th .lt-cell-note {
+    white-space: nowrap;
+}
+
+/* Check step: choices that change several rows at once, and the ones already made. */
+.lt-import-fixes {
+    margin: 0 0 24px;
+    padding: 16px;
+    border: 1px solid var(--main-border-color);
+    border-radius: var(--box-radius-small);
+    background: var(--secondary-background);
+}
+
+.lt-import-fixes-applied {
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+}
+
+.lt-import-fixes-applied li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.lt-import-fixes-applied .fa-circle-check {
+    color: var(--green);
+}
+
+/* Check step: columns keep a readable width; on a narrow screen the table scrolls sideways
+   instead of wrapping every word. */
+.lt-import-check th:not(:first-child),
+.lt-import-check td:not(:first-child) {
+    min-width: 7rem;
+}

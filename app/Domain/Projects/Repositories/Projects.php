@@ -213,6 +213,28 @@ class Projects implements StoresProjectModules
     }
 
     /**
+     * The stored people of many tasks or milestones at once (creator and assignee), read in
+     * batches, so a summary of a large import doesn't query once per item.
+     *
+     * @param  array<int, int>  $ticketIds
+     * @return array<int, array<int>> Ticket id => people; tickets that don't exist are left out.
+     */
+    public function getTicketsPeopleIds(array $ticketIds): array
+    {
+        $people = [];
+        $ticketIds = array_values(array_unique(array_filter(array_map('intval', $ticketIds), fn (int $id) => $id > 0)));
+
+        foreach (array_chunk($ticketIds, 1000) as $chunk) {
+            $rows = $this->connection->table('zp_tickets')->whereIn('id', $chunk)->get(['id', 'userId', 'editorId']);
+            foreach ($rows as $row) {
+                $people[(int) $row->id] = self::peopleIds([$row->userId ?? null, $row->editorId ?? null]);
+            }
+        }
+
+        return $people;
+    }
+
+    /**
      * The people a board item belongs to, as stored: its author and, for goals, its
      * assignee. Items of every board (ideas, goals, blueprints) live in zp_canvas_items.
      *
