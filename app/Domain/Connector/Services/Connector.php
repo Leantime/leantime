@@ -1028,7 +1028,7 @@ class Connector
      * @param  array<int, array<string, mixed>>  $values  Rows.
      * @return array<int, string> One message per invalid cell.
      */
-    private function dateFlags(array $fields, array $values): array
+    private function dateFlags(array $fields, array &$values): array
     {
         $flags = [];
 
@@ -1038,11 +1038,13 @@ class Connector
             }
 
             $sourceField = $item['sourceField'];
-            foreach ($values as $index => $dateRow) {
-                $value = trim((string) ($dateRow[$sourceField] ?? ''));
+            foreach ($values as $index => &$dateRow) {
+                $value = self::withoutFractionalSeconds(trim((string) ($dateRow[$sourceField] ?? '')));
                 if ($value === '') {
                     continue;
                 }
+                // The import reads the same cell, so it gets the value that was checked.
+                $dateRow[$sourceField] = $value;
 
                 try {
                     dtHelper()->parseUserDateTime($value);
@@ -1055,9 +1057,22 @@ class Connector
                     );
                 }
             }
+            unset($dateRow);
         }
 
         return $flags;
+    }
+
+    /**
+     * A date-time without its fraction of a second ("2026-01-25T09:00:00.000Z" →
+     * "2026-01-25T09:00:00Z"), which Trello and other tools write and Leantime's date reader
+     * doesn't accept.
+     *
+     * @param  string  $value  A date cell.
+     */
+    public static function withoutFractionalSeconds(string $value): string
+    {
+        return preg_replace('/(T\d{2}:\d{2}:\d{2})\.\d+(?=Z|[+-]\d{2}:?\d{2}|$)/', '$1', $value) ?? $value;
     }
 
     /**

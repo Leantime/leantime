@@ -670,4 +670,25 @@ class ConnectorTicketImportTest extends TestCase
         $flags = $connector->parseValues($fields, [['Title' => 'A', 'Hours' => 'two']], 'tickets', 9);
         $this->assertSame(['notification.import_row_not_a_number|2|two|Planned Hours'], $flags);
     }
+
+    public function test_dates_with_milliseconds_are_read(): void
+    {
+        $this->assertSame('2026-01-25T09:00:00Z', Connector::withoutFractionalSeconds('2026-01-25T09:00:00.000Z'));
+        $this->assertSame('2026-01-25T09:00:00+01:00', Connector::withoutFractionalSeconds('2026-01-25T09:00:00.123456+01:00'));
+        $this->assertSame('2026-01-25', Connector::withoutFractionalSeconds('2026-01-25'));
+        $this->assertSame('1.5', Connector::withoutFractionalSeconds('1.5'));
+
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getProject' => fn (int $id) => ['id' => 9, 'name' => 'Website'],
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+        $fields = [
+            ['sourceField' => 'Card Name', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Due Date', 'leantimeField' => 'dateToFinish'],
+        ];
+
+        $this->assertSame([], $connector->parseValues($fields, [['Card Name' => 'A', 'Due Date' => '2026-01-25T17:00:00.000Z']], 'tickets', 9));
+        $this->assertSame('2026-01-25T17:00:00Z', (new ReviewedRows)->load()['values'][0]['Due Date']);
+    }
 }
