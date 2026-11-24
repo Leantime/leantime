@@ -21,6 +21,9 @@ class BulkNotificationsTest extends TestCase
     /** @var array<int, Notification> Notifications that were sent. */
     private array $sent = [];
 
+    /** @var array<int, array<int, int>> Ticket ids of each stored-people lookup. */
+    private array $peopleLookups = [];
+
     private function bulk(): BulkNotifications
     {
         $this->sent = [];
@@ -49,7 +52,11 @@ class BulkNotificationsTest extends TestCase
             ]),
             // Stored people of to-dos updated without their assignee in the row.
             $this->make(ProjectRepository::class, [
-                'getTicketPeopleIds' => fn (int $ticketId) => $ticketId === 6 ? [12, 13] : [],
+                'getTicketsPeopleIds' => function (array $ticketIds) {
+                    $this->peopleLookups[] = $ticketIds;
+
+                    return array_intersect_key([6 => [12, 13]], array_flip($ticketIds));
+                },
             ]),
         );
     }
@@ -179,5 +186,19 @@ class BulkNotificationsTest extends TestCase
         sort($ids);
         $this->assertSame([5, 11, 12, 13], $ids, 'the author is not involved in their own import');
         $this->assertSame([11], $summary->entity['collaborators']);
+        $this->assertSame([[6]], $this->peopleLookups, 'only open items without known people are looked up');
+    }
+
+    public function test_stored_people_of_many_updated_items_are_read_in_one_lookup(): void
+    {
+        $this->bulk()->hold(function () {
+            foreach (range(100, 599) as $id) {
+                BulkNotifications::record($this->saved($id, 4, 'updated', 9, 'task', ['editorId' => 5]));
+            }
+        });
+
+        $this->assertCount(1, $this->sent);
+        $this->assertCount(1, $this->peopleLookups, 'one lookup for the project, not one per item');
+        $this->assertCount(500, $this->peopleLookups[0]);
     }
 }

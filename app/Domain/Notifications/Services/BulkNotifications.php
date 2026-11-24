@@ -192,11 +192,9 @@ class BulkNotifications
             }
         }
 
-        $open = 0;
         $closed = 0;
         $milestones = 0;
-        $involved = [];
-        $collaborators = [];
+        $openItems = [];
         foreach ($projectItems as $itemId => $item) {
             if ($item['type'] === 'milestone') {
                 $milestones++;
@@ -205,26 +203,26 @@ class BulkNotifications
             // An unknown status (an update that didn't change it) counts as open, so nobody
             // misses an item they still have to work on.
             $isOpen = $item['status'] === null || in_array((string) $item['status'], $openStatuses, true);
-            if (! $isOpen) {
-                $closed++;
-
-                continue;
-            }
-
-            $open++;
-            $people = $item['people'];
-            if (! $item['peopleKnown']) {
-                $people = array_merge($people, $this->projectRepository->getTicketPeopleIds($itemId));
-            }
-            if (isset($assignments[$itemId])) {
-                $people[] = $assignments[$itemId];
-            }
-            array_push($involved, ...$people);
-            array_push($collaborators, ...$item['collaborators']);
+            $isOpen ? $openItems[$itemId] = $item : $closed++;
         }
 
+        $open = count($openItems);
         if ($open === 0) {
             return;
+        }
+
+        // Stored people of the open items saved without both creator and assignee, in one go.
+        $unknown = array_keys(array_filter($openItems, fn (array $item) => ! $item['peopleKnown']));
+        $storedPeople = $unknown === [] ? [] : $this->projectRepository->getTicketsPeopleIds($unknown);
+
+        $involved = [];
+        $collaborators = [];
+        foreach ($openItems as $itemId => $item) {
+            array_push($involved, ...$item['people'], ...($storedPeople[$itemId] ?? []));
+            if (isset($assignments[$itemId])) {
+                $involved[] = $assignments[$itemId];
+            }
+            array_push($collaborators, ...$item['collaborators']);
         }
 
         $kind = $milestones === count($projectItems) ? 'milestones' : 'todos';
