@@ -189,6 +189,11 @@ class Integration extends Controller
             return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
         }
 
+        // A large file can take longer than a small server's default limit; raise it where allowed.
+        if (function_exists('set_time_limit')) {
+            set_time_limit(300);
+        }
+
         // The entity that was reviewed, not the one currently picked (another tab may have changed it).
         $result = $this->connectorService->importValues($payload['fields'], $payload['values'], $payload['entity']);
 

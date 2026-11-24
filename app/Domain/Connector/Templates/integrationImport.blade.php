@@ -53,24 +53,29 @@
         <p>{{ __('text.integration_importing') }}</p>
         <br />
 
+        {{-- One cell per mapped column, under its Leantime field; the row number is the spreadsheet's. --}}
+        <div style="overflow-x: auto;">
         <table width="100%">
             <thead>
             <tr>
-                @foreach ($fields as $sourceField => $leantimeField)
-                    <th>{{ $leantimeField['leantimeField'] }}</th>
+                <th>{{ __('label.import_row') }}</th>
+                @foreach ($fields as $field)
+                    <th>{{ $field['leantimeField'] }}</th>
                 @endforeach
             </tr>
             </thead>
             <tbody>
-            @foreach ($values as $record)
+            @foreach ($values as $index => $record)
                 <tr>
-                    @foreach ($record as $value)
-                        <td>{{ $value }}</td>
+                    <td>{{ $record[\Leantime\Domain\Connector\Services\Connector::ROW_KEY] ?? ((int) $index + 2) }}</td>
+                    @foreach ($fields as $field)
+                        <td>{{ is_scalar($record[$field['sourceField']] ?? null) ? $record[$field['sourceField']] : '' }}</td>
                     @endforeach
                 </tr>
             @endforeach
             </tbody>
         </table>
+        </div>
         <br />
 
         <div class="clearall"></div>

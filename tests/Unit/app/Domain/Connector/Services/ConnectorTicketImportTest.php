@@ -31,10 +31,14 @@ class ConnectorTicketImportTest extends TestCase
     {
         $oneArgument = ['notification.import_row_save_uncertain', 'notification.import_row_id_not_found'];
 
+        $twoArguments = ['notification.import_mapped_twice'];
+
         return $this->make(Language::class, [
-            '__' => fn (string $index, string $default = '') => in_array($index, $oneArgument, true)
-                ? $index.'|%1$s'
-                : $index.'|%1$s|%2$s|%3$s',
+            '__' => fn (string $index, string $default = '') => match (true) {
+                in_array($index, $oneArgument, true) => $index.'|%1$s',
+                in_array($index, $twoArguments, true) => $index.'|%1$s|%2$s',
+                default => $index.'|%1$s|%2$s|%3$s',
+            },
         ]);
     }
 
@@ -397,5 +401,66 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame([], $flags);
         $this->assertSame('tickets', session('serImportEntity'));
         $this->assertNotEmpty(session('serImportToken'));
+    }
+
+    public function test_several_columns_mapped_to_tags_are_combined(): void
+    {
+        $calls = [];
+        $fields = [
+            ['sourceField' => 'Summary', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Labels', 'leantimeField' => 'tags'],
+            ['sourceField' => 'Labels (2)', 'leantimeField' => 'tags'],
+            ['sourceField' => 'Labels (3)', 'leantimeField' => 'tags'],
+        ];
+        $values = [['Summary' => 'Fix login', 'Labels' => 'auth', 'Labels (2)' => '', 'Labels (3)' => 'urgent', 'projectId' => 9, 'editorId' => 1]];
+
+        $this->connector($calls)->importValues($fields, $values, 'tickets');
+
+        $this->assertSame('auth,urgent', $calls[0][1]['tags']);
+    }
+
+    public function test_a_field_that_takes_one_value_mapped_from_two_columns_is_flagged(): void
+    {
+        $calls = [];
+        $connector = $this->connector(
+            $calls,
+            ['getStatusLabels' => fn () => []],
+            [
+                'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+                'getProjectIdByName' => fn ($all, $name) => 9,
+                'isUserAssignedToProject' => fn () => true,
+            ],
+        );
+
+        $flags = $connector->parseValues([
+            ['sourceField' => 'Summary', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Issue key', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Labels', 'leantimeField' => 'tags'],
+            ['sourceField' => 'Labels (2)', 'leantimeField' => 'tags'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+        ], [['Summary' => 'One', 'Issue key' => 'WEB-1', 'Labels' => 'a', 'Labels (2)' => 'b', 'Project' => 'Website']], 'tickets');
+
+        $this->assertSame(['notification.import_mapped_twice|Title|Summary, Issue key'], $flags, 'Tags may come from several columns; Title may not');
+        $this->assertSame('', (new \Leantime\Domain\Connector\Services\ReviewedRows)->token(), 'nothing is kept for import');
+    }
+
+    public function test_messages_use_the_row_number_of_the_spreadsheet(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'addTicket' => fn ($values) => $values['headline'] === '' ? ['msg' => 'notifications.ticket_save_error_no_headline', 'type' => 'error'] : 7,
+        ]);
+
+        // Headings on row 4 and an empty row 6 that was skipped: the records are rows 5 and 7.
+        $result = $connector->importValues(
+            [['sourceField' => 'Title', 'leantimeField' => 'headline']],
+            [
+                ['Title' => 'Fine', Connector::ROW_KEY => '5', 'projectId' => 9, 'editorId' => 1],
+                ['Title' => '', Connector::ROW_KEY => '7', 'projectId' => 9, 'editorId' => 1],
+            ],
+            'tickets'
+        );
+
+        $this->assertSame(7, $result->failures[0]['row']);
     }
 }

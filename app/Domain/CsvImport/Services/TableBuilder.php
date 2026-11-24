@@ -1,0 +1,183 @@
+<?php
+
+namespace Leantime\Domain\CsvImport\Services;
+
+use Leantime\Core\Language;
+use Leantime\Domain\CsvImport\Exceptions\ImportFileException;
+use Leantime\Domain\CsvImport\Models\ImportTable;
+
+/**
+ * Turns the cells of a file into an ImportTable: finds the heading row, names every column
+ * and builds the data rows.
+ *
+ * - Heading row: exports often start with a title or details about the export (Planner puts
+ *   the plan name above its table). The heading row is the first of the opening rows that
+ *   fills most of the table's width with text. The person can pick another one.
+ * - Headings: invisible characters are removed, a column with data but no heading is named
+ *   by its letter ("Column F"), and repeated headings get a number ("Labels (2)"), so Jira's
+ *   repeated Labels, Sprint and Comment columns can all be mapped.
+ * - Rows: empty rows are skipped; every row keeps its sheet row number for messages.
+ */
+class TableBuilder
+{
+    /** How many opening rows are searched for the headings. */
+    public const HEADER_SCAN_ROWS = 20;
+
+    public function __construct(private Language $language) {}
+
+    /**
+     * Builds the table.
+     *
+     * @param  array<int, array<int, string>>  $grid  Cells by sheet row number (1 = first row) and column index.
+     * @param  string  $format  'csv' or 'xlsx'.
+     * @param  int|null  $headerRow  Row the headings are on; null to find it.
+     *
+     * @throws ImportFileException When there are no headings or no rows below them.
+     */
+    public function build(array $grid, string $format, ?int $headerRow = null): ImportTable
+    {
+        $grid = $this->clean($grid);
+
+        if ($grid === []) {
+            throw new ImportFileException($this->language->__('notification.import_file_empty'));
+        }
+
+        if ($headerRow === null || ! isset($grid[$headerRow])) {
+            $headerRow = $this->findHeaderRow($grid);
+        }
+
+        $width = 0;
+        foreach ($grid as $rowNumber => $cells) {
+            if ($rowNumber >= $headerRow && $cells !== []) {
+                $width = max($width, max(array_keys($cells)) + 1);
+            }
+        }
+
+        $headers = $this->headers($grid[$headerRow], $width);
+
+        $rows = [];
+        foreach ($grid as $rowNumber => $cells) {
+            if ($rowNumber <= $headerRow) {
+                continue;
+            }
+
+            $row = [];
+            foreach ($headers as $column => $heading) {
+                $row[$heading] = $cells[$column] ?? '';
+            }
+            $row[ImportTable::ROW_KEY] = (string) $rowNumber;
+            $rows[] = $row;
+        }
+
+        if ($rows === []) {
+            throw new ImportFileException($this->language->__('notification.import_file_no_rows'));
+        }
+
+        return new ImportTable(format: $format, headers: $headers, rows: $rows, headerRow: $headerRow);
+    }
+
+    /**
+     * Rows that appear in the file, without empty cells and fully empty rows, in row order.
+     *
+     * @param  array<int, array<int, string>>  $grid
+     * @return array<int, array<int, string>>
+     */
+    private function clean(array $grid): array
+    {
+        $clean = [];
+        foreach ($grid as $rowNumber => $cells) {
+            $kept = [];
+            foreach ($cells as $column => $cell) {
+                $cell = $this->cleanText((string) $cell);
+                if ($cell !== '') {
+                    $kept[(int) $column] = $cell;
+                }
+            }
+            if ($kept !== []) {
+                ksort($kept);
+                $clean[(int) $rowNumber] = $kept;
+            }
+        }
+        ksort($clean);
+
+        return $clean;
+    }
+
+    /**
+     * Trims a cell, including the invisible characters spreadsheets leave behind: byte order
+     * marks, zero-width spaces and non-breaking spaces.
+     */
+    private function cleanText(string $text): string
+    {
+        $text = str_replace(["\u{FEFF}", "\u{200B}", "\u{200C}", "\u{200D}"], '', $text);
+        $text = str_replace("\u{00A0}", ' ', $text);
+
+        return trim($text);
+    }
+
+    /**
+     * The first opening row that fills at least 60% of the widest opening row with mostly
+     * text. A title or "Plan name: Website" above the table fills only a cell or two.
+     *
+     * @param  array<int, array<int, string>>  $grid  Cleaned rows.
+     */
+    private function findHeaderRow(array $grid): int
+    {
+        $opening = array_slice($grid, 0, self::HEADER_SCAN_ROWS, true);
+        $widest = max(array_map('count', $opening));
+        $needed = max(1, (int) ceil($widest * 0.6));
+
+        foreach ($opening as $rowNumber => $cells) {
+            $numbers = count(array_filter($cells, fn (string $cell) => is_numeric($cell)));
+            if (count($cells) >= $needed && $numbers <= count($cells) / 2) {
+                return $rowNumber;
+            }
+        }
+
+        return (int) array_key_first($grid);
+    }
+
+    /**
+     * One unique heading per column.
+     *
+     * The mapping step separates a column from its Leantime field with "|", so a "|" in a
+     * heading becomes "/".
+     *
+     * @param  array<int, string>  $cells  The heading row.
+     * @return array<int, string> Heading per column index.
+     */
+    private function headers(array $cells, int $width): array
+    {
+        $headers = [];
+        $seen = [];
+        for ($column = 0; $column < $width; $column++) {
+            $name = str_replace('|', '/', $cells[$column] ?? '');
+            if ($name === '') {
+                $name = sprintf($this->language->__('label.import_column_letter'), self::columnLetter($column));
+            }
+
+            $key = mb_strtolower($name);
+            $seen[$key] = ($seen[$key] ?? 0) + 1;
+            if ($seen[$key] > 1) {
+                $name .= ' ('.$seen[$key].')';
+            }
+
+            $headers[$column] = $name;
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Spreadsheet column letter for a column index (0 = A, 26 = AA).
+     */
+    public static function columnLetter(int $column): string
+    {
+        $letter = '';
+        for ($n = $column + 1; $n > 0; $n = intdiv($n - 1, 26)) {
+            $letter = chr(65 + ($n - 1) % 26).$letter;
+        }
+
+        return $letter;
+    }
+}

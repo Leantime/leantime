@@ -19,10 +19,13 @@ class Integrations
     /**
      * Initializes the service dependencies.
      */
-    public function __construct(IntegrationsRepo $integrationRepo, LeantimeEntities $leantimeEntities)
+    private ReviewedRows $reviewedRows;
+
+    public function __construct(IntegrationsRepo $integrationRepo, LeantimeEntities $leantimeEntities, ?ReviewedRows $reviewedRows = null)
     {
         $this->integrationRepo = $integrationRepo;
         $this->leantimeEntities = $leantimeEntities;
+        $this->reviewedRows = $reviewedRows ?? new ReviewedRows;
     }
 
     /**
@@ -181,6 +184,12 @@ class Integrations
     public function resolveProviderFields(IntegrationModel $currentIntegration, object $provider): array
     {
         if (isset($currentIntegration->fields) && $currentIntegration->fields != '') {
+            // Stored as a JSON list (headings may contain commas), or comma-separated by older uploads.
+            $decoded = json_decode((string) $currentIntegration->fields, true);
+            if (is_array($decoded)) {
+                return array_values(array_map('strval', $decoded));
+            }
+
             return explode(',', $currentIntegration->fields);
         }
 
@@ -188,22 +197,16 @@ class Integrations
     }
 
     /**
-     * Reads the cached, serialized import payload (fields + values) from the session.
-     *
-     * Pairs with Connector::cacheSerializedFieldValues() which writes the keys.
-     * Uses safe_unserialize() to avoid object injection.
+     * Reads the rows the last review stored (see ReviewedRows), without claiming them.
      *
      * @api
      *
-     * @return array{values: array, fields: array} The decoded values and field mappings
+     * @return array{values: array, fields: array, entity: string} The rows, mappings and entity.
      */
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getCachedImportPayload(): array
     {
-        return [
-            'values' => safe_unserialize(session('serValues'), []),
-            'fields' => safe_unserialize(session('serFields'), []),
-        ];
+        return $this->reviewedRows->load();
     }
 
     /**
@@ -214,7 +217,7 @@ class Integrations
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getCachedImportToken(): string
     {
-        return (string) session('serImportToken', '');
+        return $this->reviewedRows->token();
     }
 
     /**
@@ -249,7 +252,6 @@ class Integrations
             return $nothing;
         }
 
-        $payload['entity'] = (string) session('serImportEntity', '');
         $this->forgetCachedImportPayload();
 
         return $payload;
@@ -263,6 +265,6 @@ class Integrations
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function forgetCachedImportPayload(): void
     {
-        session()->forget(['serValues', 'serFields', 'serImportEntity', 'serImportToken']);
+        $this->reviewedRows->forget();
     }
 }

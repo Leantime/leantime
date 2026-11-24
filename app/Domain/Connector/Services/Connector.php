@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Connector\Models\ImportResult;
+use Leantime\Domain\Connector\Repositories\LeantimeEntities;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -16,6 +17,18 @@ use Ramsey\Uuid\Uuid;
 
 class Connector
 {
+    /**
+     * Key of a row's spreadsheet row number, when the provider knows it (a file whose headings
+     * aren't on row 1, or with empty rows). Not a column: mapping never offers it.
+     */
+    public const ROW_KEY = '__sheetRow';
+
+    /** Leantime fields several columns can be mapped to; their values are combined. */
+    private const MULTI_COLUMN_FIELDS = ['tags'];
+
+    /** @var array<int|string, int> Spreadsheet row number per record index of the rows being handled. */
+    private array $sheetRows = [];
+
     /**
      * Leantime fields that hold a date or date-time.
      */
@@ -29,7 +42,10 @@ class Connector
         private Goalcanvas $goalCanvasRepo,
         private Ideas $ideaRepo,
         private Language $language,
-    ) {}
+        private ?ReviewedRows $reviewedRows = null,
+    ) {
+        $this->reviewedRows ??= new ReviewedRows;
+    }
 
     public function getEntityFlags($entity)
     {
@@ -108,22 +124,77 @@ class Connector
     public function parseValues($fields, $values, $entity)
     {
         $this->reviewedEntity = (string) $entity;
+        $this->rememberSheetRows($values);
 
-        if ($entity == 'tickets') {
-            return $this->parseTickets($fields, $values);
-        } elseif ($entity == 'projects') {
-            return $this->parseProjects($fields, $values);
-        } elseif ($entity == 'users') {
-            return $this->parseUsers($fields, $values);
-        } elseif ($entity == 'ideas') {
-            return $this->parseIdeas($fields, $values);
-        } elseif ($entity == 'goals') {
-            return $this->parseGoals($fields, $values);
-        } elseif ($entity == 'milestones') {
-            return $this->parseMilestones($fields, $values);
+        $flags = match ($entity) {
+            'tickets' => $this->parseTickets($fields, $values),
+            'projects' => $this->parseProjects($fields, $values),
+            'users' => $this->parseUsers($fields, $values),
+            'ideas' => $this->parseIdeas($fields, $values),
+            'goals' => $this->parseGoals($fields, $values),
+            'milestones' => $this->parseMilestones($fields, $values),
+            default => false,
+        };
+
+        if ($flags === false) {
+            return false;
         }
 
-        return false;
+        // A field that takes one value can't come from two columns; nothing is stored for import.
+        $mappedTwice = $this->mappedTwiceFlags($fields, (string) $entity);
+        if ($mappedTwice !== []) {
+            $this->reviewedRows->forget();
+
+            return array_merge($mappedTwice, $flags);
+        }
+
+        return $flags;
+    }
+
+    /**
+     * Flags every field, other than the ones that combine values (Tags), that more than one
+     * column is mapped to.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields
+     * @param  string  $entity  The entity, for the fields' names.
+     * @return array<int, string>
+     */
+    private function mappedTwiceFlags(array $fields, string $entity): array
+    {
+        $fieldNames = app()->make(LeantimeEntities::class)->availableLeantimeEntities[$entity]['fields'] ?? [];
+
+        $columns = [];
+        foreach ($fields as $item) {
+            $columns[$item['leantimeField']][] = $item['sourceField'];
+        }
+
+        $flags = [];
+        foreach ($columns as $leantimeField => $sourceFields) {
+            if (count($sourceFields) > 1 && ! in_array($leantimeField, self::MULTI_COLUMN_FIELDS, true)) {
+                $flags[] = sprintf(
+                    $this->language->__('notification.import_mapped_twice'),
+                    $fieldNames[$leantimeField]['name'] ?? $leantimeField,
+                    implode(', ', $sourceFields)
+                );
+            }
+        }
+
+        return $flags;
+    }
+
+    /**
+     * Remembers the spreadsheet row number of each record, for messages.
+     *
+     * @param  array<int|string, mixed>  $values  Rows, keyed as they will be looped over.
+     */
+    private function rememberSheetRows(array $values): void
+    {
+        $this->sheetRows = [];
+        foreach ($values as $index => $row) {
+            if (is_array($row) && isset($row[self::ROW_KEY]) && is_numeric($row[self::ROW_KEY])) {
+                $this->sheetRows[$index] = (int) $row[self::ROW_KEY];
+            }
+        }
     }
 
     private function parseTickets($fields, $values)
@@ -692,6 +763,7 @@ class Connector
         }
 
         $values = array_values($values);
+        $this->rememberSheetRows($values);
 
         return match ($entity) {
             'tickets' => $this->importTickets($finalMappings, $values),
@@ -1023,7 +1095,17 @@ class Connector
     {
         $values = [];
         for ($i = 0; $i < count($finalMappings); $i = $i + 2) {
-            $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]] ?? '';
+            $field = $finalMappings[$i + 1];
+            $cell = $row[$finalMappings[$i]] ?? '';
+
+            // Several columns mapped to Tags (Jira's repeated Labels) are combined.
+            if (in_array($field, self::MULTI_COLUMN_FIELDS, true) && isset($values[$field])) {
+                $values[$field] = implode(',', array_filter([trim((string) $values[$field]), trim((string) $cell)], fn ($v) => $v !== ''));
+
+                continue;
+            }
+
+            $values[$field] = $cell;
         }
 
         return $values;
@@ -1174,13 +1256,14 @@ class Connector
     }
 
     /**
-     * Spreadsheet row number of a record: the header is row 1, the first record row 2.
+     * Spreadsheet row number of a record: the row the provider recorded (ROW_KEY) or, without
+     * one, headings on row 1 and the first record on row 2.
      *
-     * @param  int|string  $index  Zero-based record index.
+     * @param  int|string  $index  Record index in the rows being handled.
      */
     private function rowNumber(int|string $index): int
     {
-        return (int) $index + 2;
+        return $this->sheetRows[$index] ?? (int) $index + 2;
     }
 
     /**
@@ -1196,16 +1279,11 @@ class Connector
     private function cacheSerializedFieldValues(array $fields, array $values, array $flags): void
     {
         if ($flags !== []) {
-            session()->forget(['serValues', 'serFields', 'serImportEntity', 'serImportToken']);
+            $this->reviewedRows->forget();
 
             return;
         }
 
-        session([
-            'serFields' => serialize($fields),
-            'serValues' => serialize($values),
-            'serImportEntity' => $this->reviewedEntity,
-            'serImportToken' => Uuid::uuid4()->toString(),
-        ]);
+        $this->reviewedRows->store($fields, $values, $this->reviewedEntity);
     }
 }
