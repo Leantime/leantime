@@ -17,7 +17,7 @@
 @endphp
 
 <x-global::layout.page-header icon="fa-solid fa-circle-nodes">
-    {!! __('headlines.integrations') !!} // {{ $provider->name }}
+    {!! __('headlines.connector') !!} // {{ $provider->name }}
 </x-global::layout.page-header>
 
 <div class="maincontent">
@@ -42,7 +42,7 @@
             <form method="post" action="{{ BASE_URL }}/connector/integration?provider={{ $provider->id }}&step=import{{ $urlAppend }}" class="right">
                 {{-- Ties Confirm to this review: a Confirm from an older review imports nothing. --}}
                 <input type="hidden" name="importToken" value="{{ $importToken ?? '' }}" />
-                <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.confirm') }}</x-global::forms.button>
+                <x-global::forms.button inputType="submit" contentRole="primary">{{ __('buttons.import_rows') }}</x-global::forms.button>
             </form>
         @endif
         <div class="clearall"></div>
@@ -58,7 +58,7 @@
             <tr>
                 <th>{{ __('label.import_row') }}</th>
                 @foreach ($fields as $field)
-                    <th>{{ $field['leantimeField'] }}</th>
+                    <th>{{ $leantimeFields[$field['leantimeField']]['name'] ?? $field['leantimeField'] }}</th>
                 @endforeach
             </tr>
             </thead>

@@ -68,6 +68,9 @@ class CsvImport extends Provider implements ProviderIntegration
         ];
 
         $this->button['url'] = BASE_URL.'/connector/integration?provider='.$this->id.'#/csvImport/upload';
+
+        // The first step of a file import is the upload.
+        $this->stepDetails['connect']['title'] = 'label.import_step_upload';
     }
 
     // Logic to connect to provider goes here.

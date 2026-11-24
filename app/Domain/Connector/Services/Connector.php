@@ -48,46 +48,24 @@ class Connector
         $this->reviewedRows ??= new ReviewedRows;
     }
 
+    /**
+     * What the matching step tells the person about an import, in their language.
+     *
+     * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
+     * @return array<int, string>
+     */
     public function getEntityFlags($entity)
     {
-        $flags = [];
-        if ($entity == 'tickets') {
-            $flags[] = 'If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.';
-            $flags[] = 'Headline and Project are required fields.';
-        } else {
-            if ($entity == 'projects') {
-                $flags[] = 'If there are no Assigned Users, the project will be assigned to you.';
-                $flags[] = 'If there are more than one assigned users, ensure that it is a comma separated list.';
-                $flags[] = 'If you decide to set permissions settings they have to be one of the following types: all, clients or restricted.';
-                $flags[] = 'Project Name and Client Id re required fields';
-            } else {
-                if ($entity == 'users') {
-                    // TODO add flags for users
-                    $flags[] = 'First Name, Role, Email, and Send Invite are required fields';
-                    $flags[] = 'The Send Invite field should be either Yes/No or else the user will not be imported. If Send Invite is set to No the user will have to reset the password on their own.';
-                    $flags[] = "Roles have to be one of the following values 'readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'.";
-                } else {
-                    if ($entity == 'ideas') {
-                        // TODO add flags for ideas
-                        $flags[] = 'Description, Data, and CanvasId are required fields.';
-                        $flags[] = 'If you do not have an Author field then you will be assigned as the Author.';
-                    } else {
-                        if ($entity == 'goals') {
-                            // TODO add flags for goals
-                            $flags[] = 'Title, CanvasId, Start Value, Current Value, and End Value are required fields';
-                        } else {
-                            if ($entity == 'milestones') {
-                                // TODO add flags for milestones
-                                $flags[] = 'If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.';
-                                $flags[] = 'Headline, Edit From, Edit To and Project are required fields';
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        $keys = [
+            'tickets' => ['text.import_needs_tickets', 'text.import_people_tickets'],
+            'milestones' => ['text.import_needs_milestones', 'text.import_people_tickets'],
+            'projects' => ['text.import_needs_projects', 'text.import_people_projects', 'text.import_permissions_projects'],
+            'users' => ['text.import_needs_users', 'text.import_invite_users', 'text.import_roles_users'],
+            'ideas' => ['text.import_needs_ideas', 'text.import_people_ideas'],
+            'goals' => ['text.import_needs_goals'],
+        ];
 
-        return $flags;
+        return array_map(fn (string $key) => $this->language->__($key), $keys[$entity] ?? []);
     }
 
     public function getFieldMappings($postParams)
@@ -113,6 +91,15 @@ class Connector
     /** The entity being reviewed; stored with the reviewed rows so the import uses the same one. */
     private string $reviewedEntity = '';
 
+    /** The project chosen for new rows that don't name one, or null when none was chosen. */
+    private ?int $defaultProjectId = null;
+
+    /** @var array<int, string> Project names by id, for messages. */
+    private array $projectNames = [];
+
+    /** @var array<string, array<int, int>>|null Ids of active people by lower-case full name. */
+    private ?array $peopleByName = null;
+
     /**
      * Reviews the mapped rows of one import and stores them for the import step when nothing
      * is flagged.
@@ -120,11 +107,13 @@ class Connector
      * @param  array  $fields  Column mappings (sourceField, leantimeField).
      * @param  array  $values  Rows from the file.
      * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
+     * @param  int|null  $defaultProjectId  Project for new to-dos and milestones whose row names none.
      * @return array|false The review flags, or false for an unknown entity.
      */
-    public function parseValues($fields, $values, $entity)
+    public function parseValues($fields, $values, $entity, ?int $defaultProjectId = null)
     {
         $this->reviewedEntity = (string) $entity;
+        $this->setDefaultProject($defaultProjectId);
         $this->rememberSheetRows($values);
 
         $flags = match ($entity) {
@@ -198,83 +187,23 @@ class Connector
         }
     }
 
+    /**
+     * Reviews to-do rows: required columns, people, projects, statuses, types, priorities,
+     * numbers, dates and team membership. Each problem is reported with its spreadsheet row.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows from the file.
+     * @return array<int, string> What the review found; empty when the rows can be imported.
+     */
     private function parseTickets($fields, $values)
     {
-        $matchingSourceField = '';
-        $flags = [];
+        $flags = $this->requiredColumnFlags($fields, 'tickets', ['headline']);
 
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'editorId') {
-                $matchingSourceField = $item['sourceField'];
-                break;
-            }
-        }
+        $matchingSourceField = $this->columnFor($fields, 'editorId');
+        $matchingIdField = $this->columnFor($fields, 'id');
 
-        $headlineFlag = true;
-
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'headline') {
-                $headlineFlag = false;
-                break;
-            }
-        }
-
-        if ($headlineFlag) {
-            $flags[] = 'You must have a headline column';
-        }
-
-        if ($matchingSourceField) {
-            foreach ($values as &$row) {
-                if (strpos($row[$matchingSourceField], '@') !== false) {
-                    $id = false;
-                    if (isset($row[$matchingSourceField])) {
-                        $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))['id'] ?? false;
-
-                    }
-                    if ($id) {
-                        $row['editorId'] = $id;
-                    } else {
-                        $flags[] = $row[$matchingSourceField].' '.'is not a valid User';
-                    }
-                } else {
-                    $flags[] = 'The Author/userId column must contain only valid User emails';
-                    break;
-                }
-            }
-        } else {
-            $id = session('userdata.id');
-            foreach ($values as &$row) {
-                $row['editorId'] = $id;
-            }
-        }
-
-        // PROJECT Name Check
-        $matchingProjectSourceField = '';
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'projectName') {
-                $matchingProjectSourceField = $item['sourceField'];
-                break;
-            }
-        }
-
-        if ($matchingProjectSourceField) {
-            $allProjects = $this->projectService->getAllProjects();
-
-            foreach ($values as &$row) {
-                $projectId = $this->projectService->getProjectIdByName(
-                    $allProjects,
-                    $row[$matchingProjectSourceField]
-                );
-                if (! $projectId) {
-                    $flags[] = $row[$matchingProjectSourceField].' '.'is not a valid Project';
-                } else {
-                    $row['projectId'] = $projectId;
-                    $statusLabels = $this->ticketService->getStatusLabels($projectId);
-                }
-            }
-        } else {
-            $flags[] = 'You must have a column matching to a valid Project.';
-        }
+        array_push($flags, ...$this->assigneeFlags($fields, $values, $matchingIdField));
+        array_push($flags, ...$this->projectFlags($fields, $values, $matchingIdField));
 
         // Status Field Mapping
         $matchingStatusField = '';
@@ -293,6 +222,7 @@ class Connector
                 // which may not exist in a project with a custom status set).
                 $row['status'] = $getStatus !== false ? $getStatus : null;
             }
+            unset($row);
         }
 
         // Every mapped date column is checked, not only the first one.
@@ -327,13 +257,6 @@ class Connector
         // here shows the problem on the review step, before anything is written. Like the ticket
         // service, only a new assignee is checked: an update that keeps a to-do's assignee saves
         // even if that person has left the team since.
-        $matchingIdField = '';
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'id') {
-                $matchingIdField = $item['sourceField'];
-                break;
-            }
-        }
         foreach ($values as $index => $teamRow) {
             $editorId = (int) ($teamRow['editorId'] ?? 0);
             $projectId = (int) ($teamRow['projectId'] ?? 0);
@@ -357,7 +280,7 @@ class Connector
                 $this->language->__('notification.import_row_assignee_not_on_team'),
                 $this->rowNumber($index),
                 $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
-                $matchingProjectSourceField !== '' ? (string) ($teamRow[$matchingProjectSourceField] ?? $projectId) : (string) $projectId
+                $this->projectNames[$projectId] ?? (string) $projectId
             );
         }
 
@@ -377,13 +300,16 @@ class Connector
             // to ints, which would break the strict comparison below against the
             // string CSV value.
             $validStorypoints = array_map('strval', array_keys($this->ticketService->getEffortLabels()));
-            foreach ($values as &$row) {
-                $storypoints = trim((string) ($row[$matchingStorypointsField] ?? ''));
+            foreach ($values as $index => $effortRow) {
+                $storypoints = trim((string) ($effortRow[$matchingStorypointsField] ?? ''));
                 if ($storypoints !== '' && ! in_array($storypoints, $validStorypoints, true)) {
-                    $flags[] = $matchingStorypointsField.': '.$storypoints.' '.'is not a valid story point value. Use one of: '.implode(', ', $validStorypoints);
+                    $flags[] = $this->flag('notification.import_row_invalid_effort', $this->rowNumber($index), $storypoints, implode(', ', $validStorypoints));
                 }
             }
         }
+
+        array_push($flags, ...$this->priorityFlags($fields, $values));
+        array_push($flags, ...$this->numberFlags($fields, $values, 'tickets', ['planHours', 'hourRemaining']));
 
         $this->cacheSerializedFieldValues($fields, $values, $flags);
 
@@ -409,28 +335,26 @@ class Connector
             }
         }
         if ($matchingUsersSourceField) {
-            foreach ($values as $row) {
+            foreach ($values as $index => $row) {
                 $emails = explode(',', $row[$matchingUsersSourceField]);
                 $users = [];
 
                 foreach ($emails as $email) {
+                    if (trim($email) === '') {
+                        continue;
+                    }
                     $user = $this->userService->getUserByEmail(trim($email));
                     if ($user) {
                         $users[] = $user;
                     } else {
-                        $flags[] = $email.' is not a valid user.';
+                        $flags[] = $this->flag('notification.import_row_unknown_email', $this->rowNumber($index), trim($email));
                     }
                 }
                 $row[$matchingUsersSourceField] = $users;
             }
         }
 
-        if (! $matchingProjectNameSourceField) {
-            $flags[] = 'You must have a column with Project Names';
-        }
-        if (! $matchingClientIdSourceField) {
-            $flags[] = 'You must have a column with ClientId';
-        }
+        array_push($flags, ...$this->requiredColumnFlags($fields, 'projects', ['name', 'clientId']));
 
         $this->cacheSerializedFieldValues($fields, $values, $flags);
 
@@ -461,13 +385,13 @@ class Connector
         }
 
         if ($matchingSendInviteSourceField && $matchingUsernameSourceField && $matchingRoleSourceField && $matchingFirstNameSourceField) {
-            foreach ($values as &$row) {
+            foreach ($values as $index => &$row) {
                 if (strtolower($row[$matchingSendInviteSourceField]) == 'yes') {
                     $row['sendInvite'] = true;
                 } elseif (strtolower($row[$matchingSendInviteSourceField]) == 'no') {
                     $row['sendInvite'] = false;
                 } else {
-                    $flags[] = 'The sendInvite column must contain only yes or no';
+                    $flags[] = $this->flag('notification.import_row_yes_or_no', $this->rowNumber($index), $row[$matchingSendInviteSourceField], $this->fieldName('users', 'sendInvite'));
                 }
                 if (str_contains($row[$matchingUsernameSourceField], '@')) {
                     $user = $this->userService->getUserByEmail(
@@ -478,31 +402,21 @@ class Connector
                         $row['id'] = $user['id'];
                     }
                 } else {
-                    $flags[] = 'The Username column must contain only valid emails';
+                    $flags[] = $this->flag('notification.import_row_not_an_email', $this->rowNumber($index), $row[$matchingUsernameSourceField]);
                 }
                 $rolesKey = array_search(
                     strtolower(trim($row[$matchingRoleSourceField])),
                     Roles::getRoles()
                 );
                 if (! $rolesKey) {
-                    $flags[] = $row[$matchingRoleSourceField].' is not a valid role.';
+                    $flags[] = $this->flag('notification.import_row_invalid_role', $this->rowNumber($index), $row[$matchingRoleSourceField], implode(', ', Roles::getRoles()));
                 } else {
                     $row[$matchingRoleSourceField] = $rolesKey;
                 }
             }
         }
-        if (! $matchingSendInviteSourceField) {
-            $flags[] = 'You must have a column specifying if the user should receive an invite.';
-        }
-        if (! $matchingUsernameSourceField) {
-            $flags[] = 'You must have a column with Emails.';
-        }
-        if (! $matchingRoleSourceField) {
-            $flags[] = 'You must have a column with Roles.';
-        }
-        if (! $matchingFirstNameSourceField) {
-            $flags[] = 'You must have a column with First Names.';
-        }
+        unset($row);
+        array_push($flags, ...$this->requiredColumnFlags($fields, 'users', ['user', 'firstname', 'role', 'sendInvite']));
 
         $this->cacheSerializedFieldValues($fields, $values, $flags);
 
@@ -534,21 +448,16 @@ class Connector
         }
 
         if ($matchingAuthorSourceField) {
-            foreach ($values as &$row) {
-                if (str_contains($row[$matchingAuthorSourceField], '@')) {
-                    $id = $this->userService->getUserByEmail(
-                        $row[$matchingAuthorSourceField]
-                    )['id'];
-                    if ($id) {
-                        $row['author'] = $id;
-                    } else {
-                        $flags[] = $row[$matchingAuthorSourceField].' '.'is not a valid User';
-                    }
+            foreach ($values as $index => &$row) {
+                $person = trim((string) ($row[$matchingAuthorSourceField] ?? ''));
+                $found = $person === '' ? (int) session('userdata.id') : $this->findPerson($person);
+                if (is_int($found)) {
+                    $row['author'] = $found;
                 } else {
-                    $flags[] = 'The Author column must contain only valid User emails';
-                    break;
+                    $flags[] = $this->flag($found, $this->rowNumber($index), $person);
                 }
             }
+            unset($row);
         } else {
             $id = session('userdata.id');
             foreach ($values as &$row) {
@@ -556,25 +465,13 @@ class Connector
             }
         }
         if ($matchingCanvasIdSourceField) {
-            foreach ($values as &$row) {
-                if (
-                    ! $this->ideaRepo->getSingleCanvas(
-                        $row[$matchingCanvasIdSourceField]
-                    )
-                ) {
-                    $flags[] = $row[$matchingCanvasIdSourceField].' '.'is not a valid Canvas.';
+            foreach ($values as $index => $boardRow) {
+                if (! $this->ideaRepo->getSingleCanvas($boardRow[$matchingCanvasIdSourceField])) {
+                    $flags[] = $this->flag('notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
                 }
             }
         }
-        if (! $matchingDataSourceField) {
-            $flags[] = 'You must have a column matching to Data.';
-        }
-        if (! $matchingDescriptionSourceField) {
-            $flags[] = 'You must have a column matching to Description.';
-        }
-        if (! $matchingCanvasIdSourceField) {
-            $flags[] = 'You must have a column matching to CanvasId.';
-        }
+        array_push($flags, ...$this->requiredColumnFlags($fields, 'ideas', ['description', 'data', 'canvasId']));
 
         $this->cacheSerializedFieldValues($fields, $values, $flags);
 
@@ -610,131 +507,34 @@ class Connector
         }
 
         if ($matchingCanvasIdSourceField) {
-            foreach ($values as &$row) {
-                if (
-                    ! $this->goalCanvasRepo->getSingleCanvas(
-                        $row[$matchingCanvasIdSourceField]
-                    )
-                ) {
-                    $flags[] = $row[$matchingCanvasIdSourceField].' '.'is not a valid Canvas.';
+            foreach ($values as $index => $boardRow) {
+                if (! $this->goalCanvasRepo->getSingleCanvas($boardRow[$matchingCanvasIdSourceField])) {
+                    $flags[] = $this->flag('notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
                 }
             }
         }
 
-        if (! $matchingTitleSourceField) {
-            $flags[] = 'You must have a column matching to Title.';
-        }
-        if (! $matchingCanvasIdSourceField) {
-            $flags[] = 'You must have a column matching to CanvasId.';
-        }
-        if (! $matchingCurrentValueSourceField) {
-            $flags[] = 'You must have a column matching to CurrentValue.';
-        }
-        if (! $matchingStartValueSourceField) {
-            $flags[] = 'You must have a column matching to StartValue.';
-        }
-        if (! $matchingEndValueSourceField) {
-            $flags[] = 'You must have a column matching to EndValue.';
-        }
+        array_push($flags, ...$this->requiredColumnFlags($fields, 'goals', ['title', 'canvasId', 'startValue', 'currentValue', 'endValue']));
 
         $this->cacheSerializedFieldValues($fields, $values, $flags);
 
         return $flags;
     }
 
+    /**
+     * Reviews milestone rows: required columns, people, projects and dates.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows from the file.
+     * @return array<int, string> What the review found; empty when the rows can be imported.
+     */
     private function parseMilestones($fields, $values)
     {
-        $matchingSourceField = '';
-        $flags = [];
+        $flags = $this->requiredColumnFlags($fields, 'milestones', ['headline', 'editFrom', 'editTo']);
 
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'editorId') {
-                $matchingSourceField = $item['sourceField'];
-                break;
-            }
-        }
-
-        $headlineFlag = true;
-
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'headline') {
-                $headlineFlag = false;
-                break;
-            }
-        }
-
-        if ($headlineFlag) {
-            $flags[] = 'You must have a headline column';
-        }
-
-        if ($matchingSourceField) {
-            foreach ($values as &$row) {
-                if (str_contains($row[$matchingSourceField], '@')) {
-                    $id = $this->userService->getUserByEmail(
-                        $row[$matchingSourceField]
-                    )['id'];
-                    if ($id) {
-                        $row['editorId'] = $id;
-                    } else {
-                        $flags[] = $row[$matchingSourceField].' '.'is not a valid User';
-                    }
-                } else {
-                    $flags[] = 'The Author/userId column must contain only valid User emails';
-                    break;
-                }
-            }
-        } else {
-            $id = session('userdata.id');
-            foreach ($values as &$row) {
-                $row['editorId'] = $id;
-            }
-        }
-
-        // PROJECT Name Check
-        $matchingProjectSourceField = '';
-
-        foreach ($fields as $item) {
-            if ($item['leantimeField'] === 'projectName') {
-                $matchingProjectSourceField = $item['sourceField'];
-                break;
-            }
-        }
-
-        if ($matchingProjectSourceField) {
-            $allProjects = $this->projectService->getAllProjects();
-
-            foreach ($values as &$row) {
-                $projectId = $this->projectService->getProjectIdByName(
-                    $allProjects,
-                    $row[$matchingProjectSourceField]
-                );
-                if (! $projectId) {
-                    $flags[] = $row[$matchingProjectSourceField].' '.'is not a valid Project';
-                } //
-                else {
-                    $row['projectId'] = $projectId;
-                }
-            }
-        } else {
-            $flags[] = 'You must have a column matching to a valid Project.';
-        }
-
-        $matchingEndDateSourceField = '';
-        $matchingStartDateSourceField = '';
-        foreach ($fields as $field) {
-            if ($field['leantimeField'] === 'editFrom') {
-                $matchingStartDateSourceField = $field['sourceField'];
-            }
-            if ($field['leantimeField'] === 'editTo') {
-                $matchingEndDateSourceField = $field['sourceField'];
-            }
-        }
-        if (! $matchingEndDateSourceField) {
-            $flags[] = 'You must have a column matching to a valid Edit To.';
-        }
-        if (! $matchingStartDateSourceField) {
-            $flags[] = 'You must have a column matching to a valid Edit From.';
-        }
+        $matchingIdField = $this->columnFor($fields, 'id');
+        array_push($flags, ...$this->assigneeFlags($fields, $values, $matchingIdField));
+        array_push($flags, ...$this->projectFlags($fields, $values, $matchingIdField));
 
         array_push($flags, ...$this->dateFlags($fields, $values));
 
@@ -796,8 +596,13 @@ class Connector
         foreach ($finalValues as $index => $row) {
             $ticket = $this->mapRow($finalMappings, $row);
 
-            $ticket['editorId'] = $row['editorId'] ?? '';
-            $ticket['projectId'] = $row['projectId'] ?? '';
+            // The review sets these only where the row gives them; an update row without them keeps its own.
+            unset($ticket['editorId'], $ticket['projectId']);
+            foreach (['editorId', 'projectId'] as $key) {
+                if (array_key_exists($key, $row)) {
+                    $ticket[$key] = $row[$key];
+                }
+            }
             // Only send a status that was resolved to an id of the ticket's project. Without one,
             // addTicket() uses the project's NEW status and updateTicket() keeps the stored status
             // (omitted fields are preserved), so a re-import never fails on a default id.
@@ -1069,8 +874,13 @@ class Connector
 
         foreach ($finalValues as $index => $row) {
             $ticket = $this->mapRow($finalMappings, $row);
-            $ticket['editorId'] = $row['editorId'] ?? '';
-            $ticket['projectId'] = $row['projectId'] ?? '';
+            // The review sets these only where the row gives them; an update row without them keeps its own.
+            unset($ticket['editorId'], $ticket['projectId']);
+            foreach (['editorId', 'projectId'] as $key) {
+                if (array_key_exists($key, $row)) {
+                    $ticket[$key] = $row[$key];
+                }
+            }
             // No status column: leave it out so a new milestone gets the project's NEW status and an
             // existing one keeps its stored status.
             $ticket['type'] = 'milestone';
@@ -1288,6 +1098,367 @@ class Connector
     private function importableTicketTypes(): array
     {
         return array_values(array_diff($this->ticketService->getTicketTypes(), ['subtask']));
+    }
+
+    /**
+     * Keeps the chosen project for rows that don't name one, if it exists.
+     *
+     * @param  int|null  $projectId  The chosen project, or null.
+     */
+    private function setDefaultProject(?int $projectId): void
+    {
+        $this->defaultProjectId = null;
+        $this->projectNames = [];
+
+        if ($projectId === null || $projectId <= 0) {
+            return;
+        }
+
+        $project = $this->projectService->getProject($projectId);
+        if (is_array($project) && isset($project['id'])) {
+            $this->defaultProjectId = (int) $project['id'];
+            $this->projectNames[$this->defaultProjectId] = (string) ($project['name'] ?? $projectId);
+        }
+    }
+
+    /**
+     * The file column matched to a Leantime field, or '' when none is.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  string  $leantimeField  The Leantime field.
+     */
+    private function columnFor(array $fields, string $leantimeField): string
+    {
+        foreach ($fields as $item) {
+            if ($item['leantimeField'] === $leantimeField) {
+                return (string) $item['sourceField'];
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * A review message in the person's language.
+     *
+     * @param  string  $key  Language key of the message.
+     * @param  mixed  ...$args  Values for its placeholders.
+     */
+    private function flag(string $key, mixed ...$args): string
+    {
+        return sprintf($this->language->__($key), ...$args);
+    }
+
+    /**
+     * The name of a Leantime field as the matching step shows it.
+     *
+     * @param  string  $entity  Entity key.
+     * @param  string  $field  Field key.
+     */
+    private function fieldName(string $entity, string $field): string
+    {
+        return app()->make(LeantimeEntities::class)->availableLeantimeEntities[$entity]['fields'][$field]['name'] ?? $field;
+    }
+
+    /**
+     * Flags each required field that no column is matched to.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  string  $entity  Entity key.
+     * @param  array<int, string>  $required  Required field keys.
+     * @return array<int, string>
+     */
+    private function requiredColumnFlags(array $fields, string $entity, array $required): array
+    {
+        $flags = [];
+        foreach ($required as $field) {
+            if ($this->columnFor($fields, $field) === '') {
+                $flags[] = $this->flag('notification.import_column_required', $this->fieldName($entity, $field));
+            }
+        }
+
+        return $flags;
+    }
+
+    /**
+     * Whether a row updates an existing item (its Id cell holds a number).
+     *
+     * @param  array<string, mixed>  $row  One row.
+     * @param  string  $idColumn  The column matched to Id, or ''.
+     */
+    private function isUpdateRow(array $row, string $idColumn): bool
+    {
+        return $idColumn !== '' && is_numeric(trim((string) ($row[$idColumn] ?? '')));
+    }
+
+    /**
+     * Sets each row's assignee from the column matched to it: an email address or a person's
+     * full name. A new row with an empty cell is left unassigned; an update row with an empty
+     * cell, or without the column, keeps its assignee. Without the column, new rows are
+     * assigned to the person importing.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows; editorId is set on them.
+     * @param  string  $idColumn  The column matched to Id, or ''.
+     * @return array<int, string> A message for each person that can't be found.
+     */
+    private function assigneeFlags(array $fields, array &$values, string $idColumn): array
+    {
+        $column = $this->columnFor($fields, 'editorId');
+        $flags = [];
+
+        foreach ($values as $index => &$row) {
+            unset($row['editorId']);
+            $isUpdate = $this->isUpdateRow($row, $idColumn);
+
+            if ($column === '') {
+                if (! $isUpdate) {
+                    $row['editorId'] = session('userdata.id');
+                }
+
+                continue;
+            }
+
+            $person = trim((string) ($row[$column] ?? ''));
+            if ($person === '') {
+                if (! $isUpdate) {
+                    $row['editorId'] = '';
+                }
+
+                continue;
+            }
+
+            $found = $this->findPerson($person);
+            if (is_int($found)) {
+                $row['editorId'] = $found;
+            } else {
+                $flags[] = $this->flag($found, $this->rowNumber($index), $person);
+            }
+        }
+        unset($row);
+
+        return $flags;
+    }
+
+    /**
+     * Finds an active person by email address or by full name.
+     *
+     * @param  string  $person  An email address or a full name.
+     * @return int|string The person's id, or the language key of why no one matched.
+     */
+    private function findPerson(string $person): int|string
+    {
+        if (str_contains($person, '@')) {
+            $user = $this->userService->getUserByEmail($person);
+
+            return is_array($user) && isset($user['id']) ? (int) $user['id'] : 'notification.import_row_unknown_email';
+        }
+
+        $ids = $this->peopleByName()[$this->normalisedName($person)] ?? [];
+
+        if (count($ids) === 1) {
+            return $ids[0];
+        }
+
+        return $ids === [] ? 'notification.import_row_unknown_person' : 'notification.import_row_person_ambiguous';
+    }
+
+    /**
+     * Active people by lower-case full name ("ada lovelace"), loaded once per review.
+     *
+     * @return array<string, array<int, int>>
+     */
+    private function peopleByName(): array
+    {
+        if ($this->peopleByName !== null) {
+            return $this->peopleByName;
+        }
+
+        $this->peopleByName = [];
+        foreach ($this->userService->getAll(true) ?: [] as $user) {
+            $name = $this->normalisedName(($user['firstname'] ?? '').' '.($user['lastname'] ?? ''));
+            if ($name !== '') {
+                $this->peopleByName[$name][] = (int) $user['id'];
+            }
+        }
+
+        return $this->peopleByName;
+    }
+
+    /**
+     * A name in lower case with single spaces, for comparing.
+     *
+     * @param  string  $name  A name.
+     */
+    private function normalisedName(string $name): string
+    {
+        return mb_strtolower(preg_replace('/\s+/u', ' ', trim($name)) ?? '');
+    }
+
+    /**
+     * Sets each row's project from the column matched to Project, or from the project chosen
+     * on the matching step for new rows that don't name one. Update rows without a project
+     * keep theirs.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows; projectId is set on them.
+     * @param  string  $idColumn  The column matched to Id, or ''.
+     * @return array<int, string>
+     */
+    private function projectFlags(array $fields, array &$values, string $idColumn): array
+    {
+        $column = $this->columnFor($fields, 'projectName');
+        $allProjects = $column !== '' ? $this->projectService->getAllProjects() : [];
+        $flags = [];
+        $needsProject = false;
+
+        foreach ($values as $index => &$row) {
+            unset($row['projectId']);
+            $name = $column !== '' ? trim((string) ($row[$column] ?? '')) : '';
+
+            if ($name === '') {
+                if ($this->isUpdateRow($row, $idColumn)) {
+                    continue;
+                }
+
+                if ($this->defaultProjectId !== null) {
+                    $row['projectId'] = $this->defaultProjectId;
+                } elseif ($column !== '') {
+                    $flags[] = $this->flag('notification.import_row_project_empty', $this->rowNumber($index));
+                } else {
+                    $needsProject = true;
+                }
+
+                continue;
+            }
+
+            $projectId = $this->projectService->getProjectIdByName($allProjects, $name);
+            if (! $projectId) {
+                $flags[] = $this->flag('notification.import_row_unknown_project', $this->rowNumber($index), $name);
+
+                continue;
+            }
+
+            $row['projectId'] = (int) $projectId;
+            $this->projectNames[(int) $projectId] = $name;
+        }
+        unset($row);
+
+        if ($needsProject) {
+            array_unshift($flags, $this->flag('notification.import_choose_project'));
+        }
+
+        return $flags;
+    }
+
+    /**
+     * Turns priority names (Critical … Lowest) into Leantime's numbers and flags values that
+     * are neither.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows; the priority cell is rewritten.
+     * @return array<int, string>
+     */
+    private function priorityFlags(array $fields, array &$values): array
+    {
+        $column = $this->columnFor($fields, 'priority');
+        if ($column === '') {
+            return [];
+        }
+
+        $labels = $this->ticketService->getPriorityLabels();
+        $byName = [];
+        foreach ($labels as $number => $label) {
+            $byName[mb_strtolower((string) $label)] = (string) $number;
+        }
+
+        $flags = [];
+        foreach ($values as $index => &$row) {
+            $priority = trim((string) ($row[$column] ?? ''));
+            if ($priority === '' || isset($labels[$priority])) {
+                continue;
+            }
+
+            if (isset($byName[mb_strtolower($priority)])) {
+                $row[$column] = $byName[mb_strtolower($priority)];
+
+                continue;
+            }
+
+            $choices = [];
+            foreach ($labels as $number => $label) {
+                $choices[] = $number.' '.$label;
+            }
+            $flags[] = $this->flag('notification.import_row_invalid_priority', $this->rowNumber($index), $priority, implode(', ', $choices));
+        }
+        unset($row);
+
+        return $flags;
+    }
+
+    /**
+     * Reads number cells written with a decimal comma (1,5) or thousands separators
+     * (1.234,5 or 1,234.5) and flags cells that aren't numbers.
+     *
+     * @param  array<int, array{sourceField: string, leantimeField: string}>  $fields  Column mappings.
+     * @param  array<int, array<string, mixed>>  $values  Rows; number cells are rewritten.
+     * @param  string  $entity  Entity key, for the field names.
+     * @param  array<int, string>  $numberFields  Field keys that hold numbers.
+     * @return array<int, string>
+     */
+    private function numberFlags(array $fields, array &$values, string $entity, array $numberFields): array
+    {
+        $flags = [];
+        foreach ($numberFields as $field) {
+            $column = $this->columnFor($fields, $field);
+            if ($column === '') {
+                continue;
+            }
+
+            foreach ($values as $index => &$row) {
+                $cell = trim((string) ($row[$column] ?? ''));
+                if ($cell === '') {
+                    continue;
+                }
+
+                $number = self::normalisedNumber($cell);
+                if ($number === null) {
+                    $flags[] = $this->flag('notification.import_row_not_a_number', $this->rowNumber($index), $cell, $this->fieldName($entity, $field));
+                } else {
+                    $row[$column] = $number;
+                }
+            }
+            unset($row);
+        }
+
+        return $flags;
+    }
+
+    /**
+     * A number cell as a plain decimal ("1,5" → "1.5", "1.234,5" → "1234.5",
+     * "1,234.5" → "1234.5"), or null when it isn't a number. A single comma is read as a
+     * decimal comma.
+     *
+     * @param  string  $cell  The cell value.
+     */
+    public static function normalisedNumber(string $cell): ?string
+    {
+        $cell = str_replace([' ', "\u{00A0}", "\u{202F}"], '', trim($cell));
+
+        if (preg_match('/^-?\d+(\.\d+)?$/', $cell) === 1) {
+            return $cell;
+        }
+        if (preg_match('/^-?\d+,\d+$/', $cell) === 1) {
+            return str_replace(',', '.', $cell);
+        }
+        if (preg_match('/^-?\d{1,3}(\.\d{3})+(,\d+)?$/', $cell) === 1) {
+            return str_replace(['.', ','], ['', '.'], $cell);
+        }
+        if (preg_match('/^-?\d{1,3}(,\d{3})+(\.\d+)?$/', $cell) === 1) {
+            return str_replace(',', '', $cell);
+        }
+
+        return null;
     }
 
     /**

@@ -42,7 +42,7 @@
                     @if ($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position'])
                      <i class="fa fa-check"></i>
                     @endif
-                            {{ $provider->stepDetails[$step]['title'] }}
+                            {{ __($provider->stepDetails[$step]['title']) }}
                         </span>
             </a>
         </div>

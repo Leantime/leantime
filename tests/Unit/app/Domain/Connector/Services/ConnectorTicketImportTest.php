@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Leantime\Core\Language;
 use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Services\Connector;
+use Leantime\Domain\Connector\Services\ReviewedRows;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
@@ -29,12 +30,15 @@ class ConnectorTicketImportTest extends TestCase
      */
     private function language(): Language
     {
-        $oneArgument = ['notification.import_row_save_uncertain', 'notification.import_row_id_not_found'];
+        $noArgument = ['notification.import_choose_project'];
 
-        $twoArguments = ['notification.import_mapped_twice'];
+        $oneArgument = ['notification.import_row_save_uncertain', 'notification.import_row_id_not_found', 'notification.import_column_required', 'notification.import_row_project_empty'];
+
+        $twoArguments = ['notification.import_mapped_twice', 'notification.import_row_unknown_email', 'notification.import_row_unknown_person', 'notification.import_row_person_ambiguous', 'notification.import_row_unknown_project'];
 
         return $this->make(Language::class, [
             '__' => fn (string $index, string $default = '') => match (true) {
+                in_array($index, $noArgument, true) => $index,
                 in_array($index, $oneArgument, true) => $index.'|%1$s',
                 in_array($index, $twoArguments, true) => $index.'|%1$s|%2$s',
                 default => $index.'|%1$s|%2$s|%3$s',
@@ -511,5 +515,159 @@ class ConnectorTicketImportTest extends TestCase
         );
 
         $this->assertSame(7, $result->failures[0]['row']);
+    }
+
+    public function test_without_an_assignee_column_new_rows_are_mine_and_updates_keep_their_assignee(): void
+    {
+        session(['userdata.id' => 5]);
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $fields = [
+            ['sourceField' => 'ID', 'leantimeField' => 'id'],
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+        ];
+        $flags = $connector->parseValues($fields, [
+            ['ID' => '', 'Title' => 'New', 'Project' => 'Website'],
+            ['ID' => '12', 'Title' => 'Renamed', 'Project' => ''],
+        ], 'tickets');
+        $this->assertSame([], $flags);
+
+        $rows = (new ReviewedRows)->load()['values'];
+        $connector->importValues($fields, $rows, 'tickets');
+
+        $this->assertSame(['add', 5], [$calls[0][0], $calls[0][1]['editorId']]);
+        $this->assertSame(9, $calls[0][1]['projectId']);
+        $this->assertSame('update', $calls[1][0]);
+        $this->assertArrayNotHasKey('editorId', $calls[1][1], 'an update without an Assigned To column keeps its assignee');
+        $this->assertArrayNotHasKey('projectId', $calls[1][1], 'an update with an empty Project cell stays in its project');
+    }
+
+    public function test_people_are_found_by_email_or_full_name_and_an_empty_cell_leaves_a_new_row_unassigned(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ], [
+            'getUserByEmail' => fn ($email) => $email === 'ada@example.com' ? ['id' => 1] : false,
+            'getAll' => fn () => [
+                ['id' => 1, 'firstname' => 'Ada', 'lastname' => 'Lovelace'],
+                ['id' => 2, 'firstname' => 'Ben', 'lastname' => 'Ortiz'],
+                ['id' => 3, 'firstname' => 'Sam', 'lastname' => 'Lee'],
+                ['id' => 4, 'firstname' => 'Sam', 'lastname' => 'Lee'],
+            ],
+        ]);
+
+        $fields = [
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'Assignee', 'leantimeField' => 'editorId'],
+        ];
+        $values = [
+            ['Title' => 'By email', 'Project' => 'Website', 'Assignee' => 'ada@example.com'],
+            ['Title' => 'By name', 'Project' => 'Website', 'Assignee' => '  ben   ortiz '],
+            ['Title' => 'Nobody', 'Project' => 'Website', 'Assignee' => ''],
+        ];
+        $this->assertSame([], $connector->parseValues($fields, $values, 'tickets'));
+
+        $rows = (new ReviewedRows)->load()['values'];
+        $this->assertSame([1, 2, ''], array_column($rows, 'editorId'));
+
+        $flags = implode("\n", $connector->parseValues($fields, [
+            ['Title' => 'Unknown', 'Project' => 'Website', 'Assignee' => 'Cleo Park'],
+            ['Title' => 'Twice', 'Project' => 'Website', 'Assignee' => 'Sam Lee'],
+            ['Title' => 'Bad email', 'Project' => 'Website', 'Assignee' => 'cleo@example.com'],
+        ], 'tickets'));
+        $this->assertStringContainsString('notification.import_row_unknown_person|2|Cleo Park', $flags);
+        $this->assertStringContainsString('notification.import_row_person_ambiguous|3|Sam Lee', $flags);
+        $this->assertStringContainsString('notification.import_row_unknown_email|4|cleo@example.com', $flags);
+    }
+
+    public function test_a_chosen_project_takes_new_rows_that_name_none(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getProject' => fn (int $id) => $id === 9 ? ['id' => 9, 'name' => 'Website'] : false,
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website'], ['id' => 11, 'name' => 'Launch']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Launch' ? 11 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $titleOnly = [['sourceField' => 'Title', 'leantimeField' => 'headline']];
+
+        $this->assertSame(['notification.import_choose_project'], $connector->parseValues($titleOnly, [['Title' => 'A']], 'tickets'));
+
+        $this->assertSame([], $connector->parseValues($titleOnly, [['Title' => 'A'], ['Title' => 'B']], 'tickets', 9));
+        $this->assertSame([9, 9], array_column((new ReviewedRows)->load()['values'], 'projectId'));
+
+        // A Project column goes first; its empty cells take the chosen project.
+        $withColumn = array_merge($titleOnly, [['sourceField' => 'Project', 'leantimeField' => 'projectName']]);
+        $this->assertSame([], $connector->parseValues($withColumn, [['Title' => 'A', 'Project' => 'Launch'], ['Title' => 'B', 'Project' => '']], 'tickets', 9));
+        $this->assertSame([11, 9], array_column((new ReviewedRows)->load()['values'], 'projectId'));
+
+        // Without a chosen project, an empty cell is flagged with its row.
+        $flags = $connector->parseValues($withColumn, [['Title' => 'A', 'Project' => '']], 'tickets');
+        $this->assertSame(['notification.import_row_project_empty|2'], $flags);
+
+        // A project that doesn't exist is not used.
+        $this->assertSame(['notification.import_choose_project'], $connector->parseValues($titleOnly, [['Title' => 'A']], 'tickets', 404));
+    }
+
+    public function test_priority_names_become_numbers_and_unknown_priorities_are_flagged(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'getPriorityLabels' => fn () => ['1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low', '5' => 'Lowest'],
+        ], [
+            'getProject' => fn (int $id) => ['id' => 9, 'name' => 'Website'],
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $fields = [
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Priority', 'leantimeField' => 'priority'],
+        ];
+        $this->assertSame([], $connector->parseValues($fields, [
+            ['Title' => 'A', 'Priority' => 'high'],
+            ['Title' => 'B', 'Priority' => '4'],
+            ['Title' => 'C', 'Priority' => ''],
+        ], 'tickets', 9));
+        $this->assertSame(['2', '4', ''], array_column((new ReviewedRows)->load()['values'], 'Priority'));
+
+        $flags = $connector->parseValues($fields, [['Title' => 'A', 'Priority' => 'Urgent']], 'tickets', 9);
+        $this->assertSame(['notification.import_row_invalid_priority|2|Urgent|1 Critical, 2 High, 3 Medium, 4 Low, 5 Lowest'], $flags);
+    }
+
+    public function test_hours_with_a_decimal_comma_are_read_and_other_text_is_flagged(): void
+    {
+        $this->assertSame('1.5', Connector::normalisedNumber('1,5'));
+        $this->assertSame('1234.5', Connector::normalisedNumber('1.234,5'));
+        $this->assertSame('1234.5', Connector::normalisedNumber('1,234.5'));
+        $this->assertSame('2', Connector::normalisedNumber(' 2 '));
+        $this->assertSame('1500', Connector::normalisedNumber("1\u{00A0}500"));
+        $this->assertNull(Connector::normalisedNumber('2h'));
+
+        $calls = [];
+        $connector = $this->connector($calls, [], [
+            'getProject' => fn (int $id) => ['id' => 9, 'name' => 'Website'],
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+        $fields = [
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Hours', 'leantimeField' => 'planHours'],
+        ];
+
+        $this->assertSame([], $connector->parseValues($fields, [['Title' => 'A', 'Hours' => '2,5']], 'tickets', 9));
+        $this->assertSame('2.5', (new ReviewedRows)->load()['values'][0]['Hours']);
+
+        $flags = $connector->parseValues($fields, [['Title' => 'A', 'Hours' => 'two']], 'tickets', 9);
+        $this->assertSame(['notification.import_row_not_a_number|2|two|Planned Hours'], $flags);
     }
 }

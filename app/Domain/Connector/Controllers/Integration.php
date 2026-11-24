@@ -11,6 +11,7 @@ use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
+use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
 
 class Integration extends Controller
@@ -21,17 +22,24 @@ class Integration extends Controller
 
     private Connector $connectorService;
 
+    private Projects $projectService;
+
+    /** Entities whose rows go into a project, so the matching step offers a project for all rows. */
+    private const PROJECT_ENTITIES = ['tickets', 'milestones'];
+
     /**
      * Initializes dependencies.
      */
     public function init(
         Providers $providerService,
         IntegrationService $integrationService,
-        Connector $connectorService
+        Connector $connectorService,
+        Projects $projectService
     ): void {
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -146,6 +154,8 @@ class Integration extends Controller
         $this->tpl->assign('providerFields', $this->integrationService->resolveProviderFields($currentIntegration, $provider));
         $this->tpl->assign('flags', $this->connectorService->getEntityFlags($entity));
         $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields($entity));
+        // Rows without a project of their own go into the project chosen here (nothing is pre-selected).
+        $this->tpl->assign('importProjects', in_array($entity, self::PROJECT_ENTITIES, true) ? $this->projectService->getAllProjects() : []);
 
         return $this->tpl->display('connector.integrationFields');
     }
@@ -160,10 +170,12 @@ class Integration extends Controller
     {
         $values = $provider->geValues();
         $fields = $this->connectorService->getFieldMappings($params);
-        $flags = $this->connectorService->parseValues($fields, $values, session('currentImportEntity'));
+        $projectId = is_numeric($params['importProjectId'] ?? null) ? (int) $params['importProjectId'] : null;
+        $flags = $this->connectorService->parseValues($fields, $values, session('currentImportEntity'), $projectId);
 
         $this->tpl->assign('values', $values);
         $this->tpl->assign('fields', $fields);
+        $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields((string) session('currentImportEntity')));
         $this->tpl->assign('flags', $flags);
         $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 

@@ -38,29 +38,30 @@ class Provider
         'import',
     ];
 
+    // Step titles are language keys.
     public array $stepDetails = [
         'connect' => [
-            'title' => 'Connect',
+            'title' => 'label.import_step_connect',
             'position' => 1,
         ],
         'entity' => [
-            'title' => 'Entity Mapping',
+            'title' => 'label.import_step_entity',
             'position' => 2,
         ],
         'fields' => [
-            'title' => 'Field Matching',
+            'title' => 'label.import_step_fields',
             'position' => 3,
         ],
         'sync' => [
-            'title' => 'Synchonize',
+            'title' => 'label.import_step_sync',
             'position' => 4,
         ],
         'parse' => [
-            'title' => 'Validate',
+            'title' => 'label.import_step_parse',
             'position' => 5,
         ],
         'import' => [
-            'title' => 'Import',
+            'title' => 'label.import_step_import',
             'position' => 6,
         ],
     ];
