@@ -3714,6 +3714,13 @@ class Tickets extends BaseService
      * ticket completed more than once in the range is included once, keyed to
      * its latest completion (events are newest-first).
      *
+     * "The user's" tasks: a task assigned to the user counts whoever closed it; a task the user
+     * only collaborates on counts only when the user closed it. Without this, every collaborator
+     * task a teammate finished showed up in the user's own "done" count.
+     *
+     * Dates are days in the user's timezone; they are converted to the UTC span they cover
+     * before matching history timestamps.
+     *
      * Bounds: an omitted $from or $to defaults to today; the range is then
      * normalized so the earlier date is the lower bound (a reversed range is
      * swapped rather than returning nothing). So passing only one bound yields
@@ -3756,13 +3763,32 @@ class Tickets extends BaseService
             $byId[$ticket['id']] = $ticket;
         }
 
-        $events = $this->ticketRepository->getStatusChangeEvents(array_keys($byId), $from, $to);
+        // History timestamps are stored in UTC, but $from/$to are days in the user's calendar.
+        // Turn them into the UTC span those days cover, so work finished in the user's evening
+        // isn't counted on the next day (or the previous one, east of UTC).
+        $userTimezone = dtHelper()->userNow()->getTimezone();
+        $fromUtc = CarbonImmutable::createFromFormat('!Y-m-d', $from, $userTimezone)->startOfDay()->utc();
+        $toUtc = CarbonImmutable::createFromFormat('!Y-m-d', $to, $userTimezone)->endOfDay()->utc();
+
+        $events = $this->ticketRepository->getStatusChangeEvents(
+            array_keys($byId),
+            $fromUtc->format('Y-m-d H:i:s'),
+            $toUtc->format('Y-m-d H:i:s')
+        );
 
         $closed = [];
         foreach ($events as $event) {
             $ticketId = (int) $event['ticketId'];
             $ticket = $byId[$ticketId] ?? null;
             if ($ticket === null || isset($closed[$ticketId])) {
+                continue;
+            }
+
+            // Candidates include tasks the user only collaborates on. Those count when the user
+            // closed them; a task assigned to the user counts whoever closed it.
+            $closedByUser = (int) ($event['userId'] ?? 0) === $userId;
+            $assignedToUser = (int) ($ticket['editorId'] ?? 0) === $userId;
+            if (! $closedByUser && ! $assignedToUser) {
                 continue;
             }
 

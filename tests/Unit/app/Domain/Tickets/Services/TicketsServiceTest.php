@@ -1192,14 +1192,14 @@ class TicketsServiceTest extends TestCase
      */
     public function test_closed_tickets_range_normalizes_swapped_range_and_keeps_latest_completion(): void
     {
-        session(['userdata' => ['id' => 1]]);
+        $this->useUserTimezone('UTC');
         $capturedFrom = null;
         $capturedTo = null;
 
         $ticketRepository = $this->make(TicketRepository::class, [
             'simpleTicketQuery' => fn (...$args) => [
-                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0],
-                ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0],
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 1],
+                ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 1],
             ],
             'getStateLabels' => fn (...$args) => [
                 0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
@@ -1222,14 +1222,89 @@ class TicketsServiceTest extends TestCase
         // Reversed range on purpose.
         $result = $service->getMyClosedTicketsForRange(1, '2026-07-12', '2026-07-05');
 
-        $this->assertEquals('2026-07-05', $capturedFrom, 'range should be normalized earliest-first');
-        $this->assertEquals('2026-07-12', $capturedTo);
+        $this->assertEquals('2026-07-05 00:00:00', $capturedFrom, 'range should be normalized earliest-first');
+        $this->assertEquals('2026-07-12 23:59:59', $capturedTo);
 
         // 20's only event was a change to a non-DONE status → excluded. 10 kept
         // to its latest completion (newest event wins).
         $this->assertCount(1, $result);
         $this->assertEquals(10, $result[0]['id']);
         $this->assertEquals('2026-07-10 10:00:00', $result[0]['dateClosed']);
+    }
+
+    /**
+     * getMyClosedTicketsForRange: a task the user only collaborates on counts only when the user
+     * closed it; a task assigned to the user counts whoever closed it.
+     */
+    public function test_closed_tickets_range_skips_collaborator_tasks_closed_by_someone_else(): void
+    {
+        $this->useUserTimezone('UTC');
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => fn (...$args) => [
+                // Collaborator task, closed by a teammate: not the user's work.
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 7],
+                // Collaborator task, closed by the user.
+                ['id' => 20, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 7],
+                // Assigned to the user, closed by a teammate.
+                ['id' => 30, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 1],
+            ],
+            'getStateLabels' => fn (...$args) => [
+                0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
+            ],
+            'getStatusChangeEvents' => fn (...$args) => [
+                ['ticketId' => 10, 'changeValue' => 0, 'userId' => 7, 'dateModified' => '2026-07-10 12:00:00'],
+                ['ticketId' => 20, 'changeValue' => 0, 'userId' => 1, 'dateModified' => '2026-07-10 11:00:00'],
+                ['ticketId' => 30, 'changeValue' => 0, 'userId' => 7, 'dateModified' => '2026-07-10 10:00:00'],
+            ],
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $result = $service->getMyClosedTicketsForRange(1, '2026-07-10', '2026-07-10');
+
+        $this->assertSame([20, 30], array_column($result, 'id'));
+    }
+
+    /**
+     * getMyClosedTicketsForRange: the dates are days in the user's timezone, matched against
+     * UTC history timestamps as the UTC span of those days.
+     */
+    public function test_closed_tickets_range_uses_the_users_day_in_utc(): void
+    {
+        $this->useUserTimezone('America/New_York');
+        $capturedFrom = null;
+        $capturedTo = null;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => fn (...$args) => [
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 1],
+            ],
+            'getStateLabels' => fn (...$args) => [
+                0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
+            ],
+            'getStatusChangeEvents' => function ($ids, $from, $to) use (&$capturedFrom, &$capturedTo) {
+                $capturedFrom = $from;
+                $capturedTo = $to;
+
+                return [];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+        $service->getMyClosedTicketsForRange(1, '2026-07-10', '2026-07-10');
+
+        // July 10 in New York (UTC-4 in summer) runs 04:00 UTC to 03:59:59 UTC the next day.
+        $this->assertSame('2026-07-10 04:00:00', $capturedFrom);
+        $this->assertSame('2026-07-11 03:59:59', $capturedTo);
+    }
+
+    /**
+     * Signs in user 1 with the given timezone and drops the cached date helper so it reads it.
+     */
+    private function useUserTimezone(string $timezone): void
+    {
+        session(['userdata' => ['id' => 1], 'usersettings.timezone' => $timezone]);
+        app()->forgetInstance(DateTimeHelper::class);
     }
 
     public function test_closed_tickets_range_forces_session_user_for_non_admin(): void

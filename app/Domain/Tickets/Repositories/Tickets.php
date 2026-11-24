@@ -2427,8 +2427,9 @@ class Tickets
      *
      * A general reporting primitive. Every time a ticket's status changes,
      * addTicketChange() writes a zp_tickethistory row (changeType 'status',
-     * changeValue = the new status id, dateModified = timestamp). This returns
-     * those rows for the given tickets over [fromDate, toDate], newest first.
+     * changeValue = the new status id, userId = who made the change,
+     * dateModified = UTC timestamp). This returns those rows for the given
+     * tickets over [fromDate, toDate], newest first.
      *
      * Deliberately status-config-agnostic: callers resolve changeValue against
      * their project's status labels to decide which changes count as "to DONE",
@@ -2437,9 +2438,9 @@ class Tickets
      * progress rollups.
      *
      * @param  int[]  $ticketIds
-     * @param  string  $fromDate  inclusive, 'Y-m-d'
-     * @param  string  $toDate  inclusive, 'Y-m-d'
-     * @return array<int, array{ticketId:int, changeValue:string, dateModified:string}>
+     * @param  string  $fromDate  inclusive, UTC: 'Y-m-d' (from the start of that day) or 'Y-m-d H:i:s'
+     * @param  string  $toDate  inclusive, UTC: 'Y-m-d' (to the end of that day) or 'Y-m-d H:i:s'
+     * @return array<int, array{ticketId:int, changeValue:string, userId:int, dateModified:string}>
      */
     public function getStatusChangeEvents(array $ticketIds, string $fromDate, string $toDate): array
     {
@@ -2447,11 +2448,15 @@ class Tickets
             return [];
         }
 
+        // A bare date covers the whole day; a full timestamp is used as given.
+        $from = strlen($fromDate) === 10 ? $fromDate.' 00:00:00' : $fromDate;
+        $to = strlen($toDate) === 10 ? $toDate.' 23:59:59' : $toDate;
+
         $rows = $this->connection->table('zp_tickethistory')
-            ->select('ticketId', 'changeValue', 'dateModified')
+            ->select('ticketId', 'changeValue', 'userId', 'dateModified')
             ->where('changeType', 'status')
             ->whereIn('ticketId', $ticketIds)
-            ->whereBetween('dateModified', [$fromDate.' 00:00:00', $toDate.' 23:59:59'])
+            ->whereBetween('dateModified', [$from, $to])
             ->orderBy('dateModified', 'desc')
             ->get();
 
