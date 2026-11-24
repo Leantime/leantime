@@ -178,7 +178,7 @@
 
                     <div class="tw-content-center">
                         <div class="scheduler">
-                            @if( $ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00")
+                            @if (dtHelper()->isValidDateString($ticket['editFrom'] ?? null))
                                 <i class="fa-solid fa-calendar-check infoIcon" style="color:var(--accent2)"
                                    data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($ticket['editFrom'])->date() }}"></i>
                             @else
