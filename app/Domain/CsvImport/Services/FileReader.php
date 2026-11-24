@@ -33,6 +33,12 @@ class FileReader
     /** Separators tried for CSV files, most common first. */
     private const DELIMITERS = [',', ';', "\t", '|'];
 
+    /** How many records of a CSV file the separator is detected from. */
+    private const DELIMITER_SAMPLE_RECORDS = 20;
+
+    /** Sheet states Excel hides from the person ("veryHidden" can only be shown with VBA). */
+    private const HIDDEN_SHEET_STATES = ['hidden', 'veryHidden'];
+
     /**
      * @param  int  $maxCells  Most cells a file may hold (lower in tests).
      * @param  int  $maxUnpackedBytes  Most bytes an Excel file may unpack to (lower in tests).
@@ -96,7 +102,7 @@ class FileReader
             $grid[$index + 1] = array_map(fn ($cell) => (string) $cell, array_values($record));
         }
 
-        $table = $this->tableBuilder->build($grid, 'csv', $headerRow);
+        $table = $this->tableBuilder->build($grid, 'csv', $headerRow, $this->maxCells);
         $table->delimiter = $delimiter;
         $table->encoding = $encoding;
 
@@ -120,7 +126,8 @@ class FileReader
 
         $sheetNames = [];
         foreach ($xlsx->sheetNames() as $index => $name) {
-            if (! $xlsx->isHiddenSheet($index)) {
+            $state = (string) ($xlsx->sheetMeta($index)['state'] ?? '');
+            if (! in_array($state, self::HIDDEN_SHEET_STATES, true)) {
                 $sheetNames[(int) $index] = (string) $name;
             }
         }
@@ -130,7 +137,7 @@ class FileReader
         }
 
         $grid = $this->sheetGrid($xlsx, $sheetIndex);
-        $table = $this->tableBuilder->build($grid, 'xlsx', $headerRow);
+        $table = $this->tableBuilder->build($grid, 'xlsx', $headerRow, $this->maxCells);
         $table->sheetNames = $sheetNames;
         $table->sheetIndex = $sheetIndex;
 
@@ -167,7 +174,9 @@ class FileReader
     }
 
     /**
-     * The first sheet that has a filled cell, or the first sheet.
+     * The first sheet with a cell that holds a value, or the first sheet.
+     *
+     * A sheet can have rows only because cells were formatted or cleared; those rows don't count.
      *
      * @param  array<int, int>  $sheetIndexes  Visible sheets.
      */
@@ -175,8 +184,16 @@ class FileReader
     {
         foreach ($sheetIndexes as $index) {
             $sheet = $xlsx->worksheet($index);
-            if ($sheet !== false && isset($sheet->sheetData->row) && count($sheet->sheetData->row) > 0) {
-                return $index;
+            if ($sheet === false || ! isset($sheet->sheetData->row)) {
+                continue;
+            }
+
+            foreach ($sheet->sheetData->row as $row) {
+                foreach ($row->c as $cell) {
+                    if ($this->cellText($xlsx, $cell) !== '') {
+                        return $index;
+                    }
+                }
             }
         }
 
@@ -206,7 +223,7 @@ class FileReader
                 $index = $xlsx->getIndex((string) $cell['r']);
                 $column = $index[0] > -1 ? $index[0] : $column + 1;
 
-                $value = $this->cellText($xlsx->value($cell));
+                $value = $this->cellText($xlsx, $cell);
                 if ($value === '') {
                     continue;
                 }
@@ -222,21 +239,44 @@ class FileReader
     }
 
     /**
-     * A cell value as text. A date cell without a time becomes a plain date (2026-12-05).
+     * A cell value as text.
+     *
+     * A date cell whose number format shows no time becomes a plain date (2026-12-05), so a due
+     * date stays a date. A date-time cell keeps its time, midnight included, and text is kept
+     * as typed.
      */
-    private function cellText(mixed $value): string
+    private function cellText(SimpleXLSX $xlsx, \SimpleXMLElement $cell): string
     {
+        $value = $xlsx->value($cell);
         if (is_bool($value)) {
             return $value ? 'TRUE' : 'FALSE';
         }
 
         $text = trim((string) $value);
 
-        if (preg_match('/^(\d{4}-\d{2}-\d{2}) 00:00:00$/', $text, $date) === 1) {
+        if (preg_match('/^(\d{4}-\d{2}-\d{2}) 00:00:00$/', $text, $date) === 1 && $this->isDateOnlyCell($xlsx, $cell)) {
             return $date[1];
         }
 
         return $text;
+    }
+
+    /**
+     * Whether a cell is a number formatted as a date without a time.
+     */
+    private function isDateOnlyCell(SimpleXLSX $xlsx, \SimpleXMLElement $cell): bool
+    {
+        $type = (string) $cell['t'];
+        if ($type !== '' && $type !== 'n') {
+            return false;
+        }
+
+        $format = (string) ($xlsx->cellFormats[(int) $cell['s']]['format'] ?? '');
+
+        // Quoted text and [colour]/[locale] sections aren't part of the date pattern.
+        $pattern = (string) preg_replace('/"[^"]*"|\[[^\]]*\]/', '', $format);
+
+        return $pattern !== '' && preg_match('/[hHsS]|AM\/PM|A\/P/i', $pattern) !== 1;
     }
 
     /**
@@ -267,21 +307,17 @@ class FileReader
     }
 
     /**
-     * Finds the separator: the candidate that splits the first lines into the same number of
+     * Finds the separator: the candidate that splits the first records into the same number of
      * columns most consistently, preferring more columns.
      */
     private function detectDelimiter(string $text): string
     {
-        $lines = array_slice(array_values(array_filter(
-            preg_split('/\r\n|\r|\n/', $text) ?: [],
-            fn (string $line) => trim($line) !== ''
-        )), 0, 20);
+        $records = $this->delimiterCounts($text);
 
         $best = ',';
         $bestScore = [0.0, 0];
         foreach (self::DELIMITERS as $delimiter) {
-            $counts = array_map(fn (string $line) => $this->countOutsideQuotes($line, $delimiter), $lines);
-            $counts = array_values(array_filter($counts, fn (int $count) => $count > 0));
+            $counts = array_values(array_filter(array_column($records, $delimiter), fn (int $count) => $count > 0));
             if ($counts === []) {
                 continue;
             }
@@ -289,7 +325,7 @@ class FileReader
             $frequency = array_count_values($counts);
             arsort($frequency);
             $mode = (int) array_key_first($frequency);
-            $score = [$frequency[$mode] / max(count($lines), 1), $mode];
+            $score = [$frequency[$mode] / max(count($records), 1), $mode];
 
             if ($score > $bestScore) {
                 $best = $delimiter;
@@ -301,22 +337,62 @@ class FileReader
     }
 
     /**
-     * Counts a separator in a line, ignoring separators inside quoted cells.
+     * How often each candidate separator appears in each of the first records.
+     *
+     * Records are read like a CSV reader reads them: separators and line breaks inside quoted
+     * cells don't count, so a description over several lines stays one record.
+     *
+     * @return array<int, array<string, int>> Per record: separator => count.
      */
-    private function countOutsideQuotes(string $line, string $delimiter): int
+    private function delimiterCounts(string $text): array
     {
-        $count = 0;
+        $empty = array_fill_keys(self::DELIMITERS, 0);
+        $records = [];
+        $counts = $empty;
+        $filled = false;
         $quoted = false;
-        $length = strlen($line);
+        $length = strlen($text);
+
         for ($i = 0; $i < $length; $i++) {
-            if ($line[$i] === '"') {
+            $char = $text[$i];
+
+            if ($char === '"') {
                 $quoted = ! $quoted;
-            } elseif (! $quoted && $line[$i] === $delimiter) {
-                $count++;
+                $filled = true;
+
+                continue;
+            }
+
+            if ($quoted) {
+                continue;
+            }
+
+            if ($char === "\n" || $char === "\r") {
+                if ($filled) {
+                    $records[] = $counts;
+                    if (count($records) >= self::DELIMITER_SAMPLE_RECORDS) {
+                        return $records;
+                    }
+                }
+                $counts = $empty;
+                $filled = false;
+
+                continue;
+            }
+
+            if (isset($counts[$char])) {
+                $counts[$char]++;
+            }
+            if ($char !== ' ' && $char !== "\t") {
+                $filled = true;
             }
         }
 
-        return $count;
+        if ($filled) {
+            $records[] = $counts;
+        }
+
+        return $records;
     }
 
     /**

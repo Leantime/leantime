@@ -13,9 +13,13 @@ use Leantime\Domain\CsvImport\Models\ImportTable;
  * - Heading row: exports often start with a title or details about the export (Planner puts
  *   the plan name above its table). The heading row is the first of the opening rows that
  *   fills most of the table's width with text. The person can pick another one.
+ * - Columns: only columns with a heading or a value become columns, so a heading far to the
+ *   right doesn't turn every empty column before it into one.
  * - Headings: invisible characters are removed, a column with data but no heading is named
  *   by its letter ("Column F"), and repeated headings get a number ("Labels (2)"), so Jira's
  *   repeated Labels, Sprint and Comment columns can all be mapped.
+ * - Cells: trimmed, including byte order marks, zero-width and non-breaking spaces at either
+ *   end. Characters inside a value are kept (joiners belong to emoji and some scripts).
  * - Rows: empty rows are skipped; every row keeps its sheet row number for messages.
  */
 class TableBuilder
@@ -31,10 +35,12 @@ class TableBuilder
      * @param  array<int, array<int, string>>  $grid  Cells by sheet row number (1 = first row) and column index.
      * @param  string  $format  'csv' or 'xlsx'.
      * @param  int|null  $headerRow  Row the headings are on; null to find it.
+     * @param  int  $maxCells  Most cells the table may hold (rows times columns).
      *
-     * @throws ImportFileException When there are no headings or no rows below them.
+     * @throws ImportFileException When there are no headings or no rows below them, or the
+     *                             table would hold more than $maxCells cells.
      */
-    public function build(array $grid, string $format, ?int $headerRow = null): ImportTable
+    public function build(array $grid, string $format, ?int $headerRow = null, int $maxCells = FileReader::MAX_CELLS): ImportTable
     {
         $grid = $this->clean($grid);
 
@@ -46,14 +52,24 @@ class TableBuilder
             $headerRow = $this->findHeaderRow($grid);
         }
 
-        $width = 0;
+        $columns = [];
+        $dataRows = 0;
         foreach ($grid as $rowNumber => $cells) {
-            if ($rowNumber >= $headerRow && $cells !== []) {
-                $width = max($width, max(array_keys($cells)) + 1);
+            if ($rowNumber >= $headerRow) {
+                $columns += array_fill_keys(array_keys($cells), true);
+                $dataRows += $rowNumber > $headerRow ? 1 : 0;
             }
         }
+        ksort($columns);
 
-        $headers = $this->headers($grid[$headerRow], $width);
+        if ($dataRows * count($columns) > $maxCells) {
+            throw new ImportFileException(sprintf(
+                $this->language->__('notification.import_file_too_large'),
+                number_format($maxCells)
+            ));
+        }
+
+        $headers = $this->headers($grid[$headerRow], array_keys($columns));
 
         $rows = [];
         foreach ($grid as $rowNumber => $cells) {
@@ -73,7 +89,7 @@ class TableBuilder
             throw new ImportFileException($this->language->__('notification.import_file_no_rows'));
         }
 
-        return new ImportTable(format: $format, headers: $headers, rows: $rows, headerRow: $headerRow);
+        return new ImportTable(format: $format, headers: array_values($headers), rows: $rows, headerRow: $headerRow);
     }
 
     /**
@@ -88,7 +104,7 @@ class TableBuilder
         foreach ($grid as $rowNumber => $cells) {
             $kept = [];
             foreach ($cells as $column => $cell) {
-                $cell = $this->cleanText((string) $cell);
+                $cell = $this->trimCell((string) $cell);
                 if ($cell !== '') {
                     $kept[(int) $column] = $cell;
                 }
@@ -104,15 +120,23 @@ class TableBuilder
     }
 
     /**
-     * Trims a cell, including the invisible characters spreadsheets leave behind: byte order
-     * marks, zero-width spaces and non-breaking spaces.
+     * Trims a cell, including the invisible characters spreadsheets leave at either end: byte
+     * order marks, zero-width spaces and non-breaking spaces. The inside is kept as it is.
      */
-    private function cleanText(string $text): string
+    private function trimCell(string $text): string
     {
-        $text = str_replace(["\u{FEFF}", "\u{200B}", "\u{200C}", "\u{200D}"], '', $text);
-        $text = str_replace("\u{00A0}", ' ', $text);
+        return preg_replace('/^[\s\x{FEFF}\x{200B}\x{00A0}]+|[\s\x{FEFF}\x{200B}\x{00A0}]+$/u', '', $text) ?? trim($text);
+    }
 
-        return trim($text);
+    /**
+     * A heading without byte order marks or zero-width spaces anywhere in it, and with plain
+     * spaces for non-breaking ones, so "Due\u{00A0}date" matches "Due date".
+     */
+    private function cleanHeading(string $text): string
+    {
+        $text = str_replace(["\u{FEFF}", "\u{200B}"], '', $text);
+
+        return trim(str_replace("\u{00A0}", ' ', $text));
     }
 
     /**
@@ -143,26 +167,31 @@ class TableBuilder
      * The mapping step separates a column from its Leantime field with "|", so a "|" in a
      * heading becomes "/".
      *
+     * A heading is never the row number's key, and a number is never given twice: for
+     * "Labels, Labels, Labels (2)" the second column becomes "Labels (2)" and the third
+     * "Labels (2) (2)".
+     *
      * @param  array<int, string>  $cells  The heading row.
+     * @param  array<int, int>  $columns  Column indexes that hold a heading or a value.
      * @return array<int, string> Heading per column index.
      */
-    private function headers(array $cells, int $width): array
+    private function headers(array $cells, array $columns): array
     {
         $headers = [];
-        $seen = [];
-        for ($column = 0; $column < $width; $column++) {
-            $name = str_replace('|', '/', $cells[$column] ?? '');
+        $taken = [mb_strtolower(ImportTable::ROW_KEY) => true];
+        foreach ($columns as $column) {
+            $name = str_replace('|', '/', $this->cleanHeading($cells[$column] ?? ''));
             if ($name === '') {
                 $name = sprintf($this->language->__('label.import_column_letter'), self::columnLetter($column));
             }
 
-            $key = mb_strtolower($name);
-            $seen[$key] = ($seen[$key] ?? 0) + 1;
-            if ($seen[$key] > 1) {
-                $name .= ' ('.$seen[$key].')';
+            $unique = $name;
+            for ($number = 2; isset($taken[mb_strtolower($unique)]); $number++) {
+                $unique = $name.' ('.$number.')';
             }
+            $taken[mb_strtolower($unique)] = true;
 
-            $headers[$column] = $name;
+            $headers[$column] = $unique;
         }
 
         return $headers;

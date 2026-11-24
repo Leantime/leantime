@@ -50,11 +50,15 @@ class FileReaderTest extends TestCase
     }
 
     /**
-     * Builds an .xlsx workbook: shared strings, a date style (numFmt 14) and optional sheets.
+     * Builds an .xlsx workbook: shared strings, a date style (numFmt 14), a date-time style
+     * (numFmt 22) and optional sheets.
      *
      * @param  array<string, array<int, array<int, mixed>>>  $sheets  Sheet name => rows of cells; a
-     *                                                                ['date' => 46361.0] cell is a date.
-     * @param  array<int, string>  $hidden  Names of hidden sheets.
+     *                                                                ['date' => 46361.0] cell is a date,
+     *                                                                ['datetime' => 46361.0] a date-time,
+     *                                                                ['formatted' => true] a cell with a
+     *                                                                style but no value.
+     * @param  array<int|string, string>  $hidden  Names of hidden sheets, or name => state ('veryHidden').
      */
     private function xlsx(array $sheets, array $hidden = [], string $extension = 'xlsx'): string
     {
@@ -68,7 +72,11 @@ class FileReaderTest extends TestCase
                 $xml .= '<row r="'.($r + 1).'">';
                 foreach ($cells as $c => $value) {
                     $ref = TableBuilder::columnLetter($c).($r + 1);
-                    if (is_array($value)) {
+                    if (is_array($value) && isset($value['formatted'])) {
+                        $xml .= '<c r="'.$ref.'" s="1"/>';
+                    } elseif (is_array($value) && isset($value['datetime'])) {
+                        $xml .= '<c r="'.$ref.'" s="2"><v>'.$value['datetime'].'</v></c>';
+                    } elseif (is_array($value)) {
                         $xml .= '<c r="'.$ref.'" s="1"><v>'.$value['date'].'</v></c>';
                     } elseif (is_bool($value)) {
                         $xml .= '<c r="'.$ref.'" t="b"><v>'.($value ? 1 : 0).'</v></c>';
@@ -87,10 +95,14 @@ class FileReaderTest extends TestCase
         $workbookSheets = '';
         $rels = '';
         $types = '';
+        $states = [];
+        foreach ($hidden as $key => $value) {
+            is_int($key) ? $states[$value] = 'hidden' : $states[$key] = $value;
+        }
         $i = 0;
         foreach (array_keys($sheets) as $name) {
             $i++;
-            $state = in_array($name, $hidden, true) ? ' state="hidden"' : '';
+            $state = isset($states[$name]) ? ' state="'.$states[$name].'"' : '';
             $workbookSheets .= '<sheet name="'.$name.'" sheetId="'.$i.'"'.$state.' r:id="rId'.$i.'"/>';
             $rels .= '<Relationship Id="rId'.$i.'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'.$i.'.xml"/>';
             $types .= '<Override PartName="/xl/worksheets/sheet'.$i.'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
@@ -105,7 +117,7 @@ class FileReaderTest extends TestCase
         $zip->addFromString('_rels/.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
         $zip->addFromString('xl/workbook.xml', '<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'.$workbookSheets.'</sheets></workbook>');
         $zip->addFromString('xl/_rels/workbook.xml.rels', '<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'.$rels.'</Relationships>');
-        $zip->addFromString('xl/styles.xml', '<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cellXfs count="2"><xf numFmtId="0"/><xf numFmtId="14" applyNumberFormat="1"/></cellXfs></styleSheet>');
+        $zip->addFromString('xl/styles.xml', '<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cellXfs count="3"><xf numFmtId="0"/><xf numFmtId="14" applyNumberFormat="1"/><xf numFmtId="22" applyNumberFormat="1"/></cellXfs></styleSheet>');
         $shared = '';
         foreach ($strings as $string) {
             $shared .= '<si><t xml:space="preserve">'.htmlspecialchars($string, ENT_XML1).'</t></si>';
@@ -143,6 +155,17 @@ class FileReaderTest extends TestCase
         $this->assertSame('2', $table->rows[0][ImportTable::ROW_KEY]);
     }
 
+    public function test_numbered_headings_never_collide_with_existing_ones_or_the_row_number(): void
+    {
+        $table = $this->reader()->read($this->file('Labels,Labels,Labels (2),'.ImportTable::ROW_KEY.'
+a,b,c,d
+'));
+
+        $this->assertSame(['Labels', 'Labels (2)', 'Labels (2) (2)', ImportTable::ROW_KEY.' (2)'], $table->headers);
+        $this->assertSame(['a', 'b', 'c', 'd'], array_values(array_diff_key($table->rows[0], [ImportTable::ROW_KEY => 0])), 'every column keeps its values');
+        $this->assertSame('2', $table->rows[0][ImportTable::ROW_KEY]);
+    }
+
     public function test_semicolons_tabs_and_quoted_separators(): void
     {
         $semicolons = $this->reader()->read($this->file("Titel;Projekt;Stunden\n\"Angebot, neu\";Website;2,5\nRechnung;Website;1\n"));
@@ -153,6 +176,9 @@ class FileReaderTest extends TestCase
         $tabs = $this->reader()->read($this->file("Title\tStatus\nOne\tDone\n", 'tsv'));
         $this->assertSame("\t", $tabs->delimiter);
         $this->assertSame('Done', $tabs->rows[0]['Status']);
+
+        $multiline = "Title,Description\nOne,\"Steps:\na;b\nc;d\ne;f\"\nTwo,\"x;y\nz;w\"\n";
+        $this->assertSame(',', $this->reader()->read($this->file($multiline))->delimiter, 'separators in a quoted cell over several lines do not count');
     }
 
     public function test_encodings_are_converted_to_utf8(): void
@@ -189,8 +215,29 @@ class FileReaderTest extends TestCase
     {
         $table = $this->reader()->read($this->file("Title,\u{00A0}Owner\u{200B},,\nOne,Ada,,note\n"));
 
-        $this->assertSame(['Title', 'Owner', 'label.import_column_letter|C', 'label.import_column_letter|D'], $table->headers);
+        $this->assertSame(['Title', 'Owner', 'label.import_column_letter|D'], $table->headers, 'column C has no heading and no value');
         $this->assertSame('note', $table->rows[0]['label.import_column_letter|D']);
+    }
+
+    public function test_values_keep_the_characters_inside_them(): void
+    {
+        $table = $this->reader()->read($this->file("Title,Owner\n\u{200B}Dev 👩\u{200D}💻\u{00A0},10\u{00A0}%\n"));
+
+        $this->assertSame("Dev 👩\u{200D}💻", $table->rows[0]['Title'], 'invisible characters at the ends go, the emoji joiner stays');
+        $this->assertSame("10\u{00A0}%", $table->rows[0]['Owner']);
+    }
+
+    public function test_a_heading_far_to_the_right_does_not_add_the_empty_columns_before_it(): void
+    {
+        $rows = [['Title'], ['One'], ['Two']];
+        $rows[0][16383] = 'Notes';
+        $table = $this->reader()->read($this->xlsx(['Sheet1' => $rows]));
+
+        $this->assertSame(['Title', 'Notes'], $table->headers);
+        $this->assertSame(['Title' => 'One', 'Notes' => '', ImportTable::ROW_KEY => '2'], $table->rows[0]);
+
+        $wide = $this->file("A,B,C,D\n1\n2\n3\n");
+        $this->assertRefused($wide, 'notification.import_file_too_large', $this->reader(maxCells: 10));
     }
 
     public function test_a_pipe_in_a_heading_does_not_break_mapping(): void
@@ -227,6 +274,34 @@ class FileReaderTest extends TestCase
         $this->assertSame('2.5', $table->rows[1]['Effort']);
         $this->assertSame('FALSE', $table->rows[0]['Done']);
         $this->assertSame(['5', '6'], array_column($table->rows, ImportTable::ROW_KEY));
+    }
+
+    public function test_very_hidden_and_formatted_only_sheets_are_not_picked(): void
+    {
+        $path = $this->xlsx([
+            'Lookup' => [['Code', 'Name'], ['a', 'b']],
+            'Blank' => [[['formatted' => true], ['formatted' => true]], [['formatted' => true]]],
+            'Tasks' => [['Title'], ['One']],
+        ], ['Lookup' => 'veryHidden']);
+
+        $table = $this->reader()->read($path);
+
+        $this->assertSame([1 => 'Blank', 2 => 'Tasks'], $table->sheetNames, 'a very hidden sheet is not offered');
+        $this->assertSame('Tasks', $table->sheetName(), 'a sheet with formatting but no values is skipped');
+    }
+
+    public function test_midnight_stays_a_time_when_the_cell_shows_one(): void
+    {
+        $path = $this->xlsx(['Sheet1' => [
+            ['Title', 'Due', 'Starts', 'Typed'],
+            ['One', ['date' => 46361.0], ['datetime' => 46361.0], '2026-12-05 00:00:00'],
+        ]]);
+
+        $row = $this->reader()->read($path)->rows[0];
+
+        $this->assertSame('2026-12-05', $row['Due'], 'a date format: a date');
+        $this->assertSame('2026-12-05 00:00:00', $row['Starts'], 'a date-time format: midnight is kept');
+        $this->assertSame('2026-12-05 00:00:00', $row['Typed'], 'text is kept as typed');
     }
 
     public function test_the_person_can_pick_another_sheet(): void

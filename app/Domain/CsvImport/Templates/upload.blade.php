@@ -88,7 +88,7 @@
             jQuery(".input-error").text('');
 
             // Show what was found in the file before anything is mapped.
-            window.location.href = "{{ BASE_URL }}/csvImport/file?integrationId="+response.body.id;
+            window.location.href = "{{ BASE_URL }}/csvImport/preview?integrationId="+response.body.id;
 
         });
 
