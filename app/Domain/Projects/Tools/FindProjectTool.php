@@ -54,6 +54,10 @@ class FindProjectTool extends Tool
     {
         $arguments = $request->all();
 
+        if (! isset($arguments['term']) || ! is_string($arguments['term'])) {
+            return Response::error('The term argument is required and must be a string.');
+        }
+
         $term = $arguments['term'];
         $projects = $this->projectService->findProject($term);
 
@@ -70,7 +74,7 @@ class FindProjectTool extends Tool
                 'type' => $project['type'],
                 'state' => $project['state'],
             ];
-            $response .= Str::toMarkdown($result)."\n";
+            $response .= Str::toMarkdown($result)."\n\n";
         }
 
         return Response::text($response);

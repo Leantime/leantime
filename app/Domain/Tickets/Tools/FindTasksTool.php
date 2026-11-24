@@ -43,7 +43,7 @@ class FindTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Search for tasks across multiple projects efficiently. This is the primary tool for task discovery and should be used for ALL task searches, whether for single projects or multiple projects. Use this instead of separate project queries. Supports filtering by user, status, status type and last-modified time. Omit projectIds to search every project you can access (useful with modifiedAfter for "what changed since" checks). Important: Execute this tool only ONCE. Ensure you have all project ids you want to query ready and in this array.';
+        return 'Search for tasks across multiple projects efficiently. This is the primary tool for task discovery and should be used for ALL task searches, whether for single projects or multiple projects. Use this instead of separate project queries. Supports filtering by user, status, status type, tags and last-modified time. Omit projectIds to search every project you can access (useful with modifiedAfter for "what changed since" checks). Important: Execute this tool only ONCE. Ensure you have all project ids you want to query ready and in this array.';
     }
 
     /**
@@ -70,6 +70,8 @@ class FindTasksTool extends Tool
                 ->description('Status filter: open (not completed), done (completed), all (everything). Default is all.'),
             'statusType' => $schema->string()
                 ->description('Status type filter, comma separated: NEW, INPROGRESS, DONE, NOT_DONE. Resolved per project, e.g. INPROGRESS for everything in progress.'),
+            'tags' => $schema->string()
+                ->description('Comma-separated whole tags; matches any tag, ignoring case.'),
             'limit' => $schema->integer()
                 ->description('Maximum tasks per project (or in total when projectIds is omitted). Default 20.'),
         ];
@@ -100,6 +102,7 @@ class FindTasksTool extends Tool
             'modifiedAfter' => $arguments['modifiedAfter'] ?? $arguments['dateRangeFrom'] ?? '',
             'modifiedBefore' => $arguments['modifiedBefore'] ?? $arguments['dateRangeTo'] ?? '',
             'statusType' => $arguments['statusType'] ?? '',
+            'tags' => $arguments['tags'] ?? '',
         ];
 
         // status=open/done is resolved per project, so map it to the equivalent status type; that

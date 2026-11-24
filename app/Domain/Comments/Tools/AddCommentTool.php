@@ -27,7 +27,7 @@ class AddCommentTool extends Tool
     {
         return [
             'text' => $schema->string()
-                ->description('Comment text.')
+                ->description('Comment text as HTML; use <p> or <br> for line breaks.')
                 ->required(),
             'module' => $schema->string()
                 ->description('Module type: ticket, project, article (wiki), idea, goal or {type}canvasitem.')

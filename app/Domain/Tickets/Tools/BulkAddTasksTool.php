@@ -42,7 +42,7 @@ class BulkAddTasksTool extends Tool
      */
     public function description(): string
     {
-        return 'Adds multiple task in a single operation. Expects an array of task data where each element contains the same fields as addTicket. Required fields for each ticket: headline, projectId. Optional fields: description, editorId, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.'.
+        return 'Adds multiple tasks in a single operation. Required fields for each task: headline, projectId. Optional fields: description (HTML; use <p> or <br> for line breaks), tags (comma-separated), priority, storypoints (effort), editorId, userId, dateToFinish, status, sprint, editFrom, editTo, milestone.'.
             ' The assignee (editorId) must be on the project team: pick one with getUsersAssignedToProject.';
     }
 
@@ -77,6 +77,9 @@ class BulkAddTasksTool extends Tool
                 $params = [
                     'headline' => $taskData['headline'] ?? '',
                     'description' => $taskData['description'] ?? '',
+                    'tags' => $taskData['tags'] ?? '',
+                    'priority' => $taskData['priority'] ?? null,
+                    'storypoints' => $taskData['storypoints'] ?? null,
                     'projectId' => $taskData['projectId'] ?? null,
                     'editorId' => $taskData['editorId'] ?? null,
                     'userId' => $taskData['userId'] ?? null,

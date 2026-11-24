@@ -918,6 +918,21 @@ class Tickets
             $query->whereIn($this->connection->raw('LOWER(zp_tickets.priority)'), $priorities);
         }
 
+        if (isset($searchCriteria['tags']) && $searchCriteria['tags'] !== '') {
+            $tags = array_values(array_filter(
+                array_map('trim', explode(',', (string) $searchCriteria['tags'])),
+                static fn ($tag) => $tag !== ''
+            ));
+            if ($tags !== []) {
+                $findTagSql = $this->dbHelper->findInSet('LOWER(?)', 'LOWER(zp_tickets.tags)');
+                $query->where(function ($q) use ($tags, $findTagSql) {
+                    foreach ($tags as $tag) {
+                        $q->orWhereRaw($findTagSql, [$tag]);
+                    }
+                });
+            }
+        }
+
         if (isset($searchCriteria['term']) && $searchCriteria['term'] != '') {
             $term = $searchCriteria['term'];
             $termWild = '%'.$term.'%';

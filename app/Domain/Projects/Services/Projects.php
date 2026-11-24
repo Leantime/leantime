@@ -3454,8 +3454,6 @@ class Projects extends BaseService implements ChecksProjectAccess
 
             if (Str::contains($projects[$key]['name'], $term, ignoreCase: true) || $term == '') {
                 $projects[$key] = $this->prepareDatesForApiResponse($project);
-                $projects[$key]['id'] = $project['id'].'-'.$project['modified'];
-
                 $filteredProjects[] = $projects[$key];
             }
         }

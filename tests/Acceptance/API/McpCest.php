@@ -155,6 +155,45 @@ class McpCest
     }
 
     #[Group('mcp')]
+    public function mcpTaskTagsAndRequiredArguments(AcceptanceTester $I, Scenario $scenario)
+    {
+        $this->enableMcpPluginOrSkip($I, $scenario);
+        $this->mintBearerToken($I);
+
+        $response = $this->callTool($I, 'findProject', []);
+        Assert::assertTrue($response['result']['isError'] ?? false);
+        Assert::assertStringContainsString('term', $this->toolText($response));
+
+        $response = $this->callTool($I, 'addTask', [
+            'headline' => 'Agent handoff',
+            'projectId' => 1,
+            'tags' => 'Agent,review',
+            'priority' => 2,
+            'storypoints' => 5,
+        ]);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
+        Assert::assertSame(1, preg_match('/ID:?\s*(\d+)/', $this->toolText($response), $matches));
+        $I->seeInDatabase('zp_tickets', ['id' => (int) $matches[1], 'tags' => 'Agent,review', 'priority' => 2, 'storypoints' => 5]);
+
+        $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agent']);
+        Assert::assertStringContainsString('Agent handoff', $this->toolText($response));
+        $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agen']);
+        Assert::assertStringNotContainsString('Agent handoff', $this->toolText($response));
+
+        $response = $this->callTool($I, 'bulkAddTasks', ['tasks' => [
+            ['headline' => 'Agent bulk handoff', 'projectId' => 1, 'tags' => 'agent', 'priority' => 1, 'storypoints' => 3],
+        ]]);
+        Assert::assertStringContainsString('Success: 1, Failed: 0', $this->toolText($response));
+        $I->seeInDatabase('zp_tickets', ['headline' => 'Agent bulk handoff', 'tags' => 'agent', 'priority' => 1, 'storypoints' => 3]);
+
+        $response = $this->callTool($I, 'editTask', ['id' => (int) $matches[1], 'params' => ['status' => 'done']]);
+        Assert::assertFalse($response['result']['isError'] ?? true, $this->toolText($response));
+        $response = $this->callTool($I, 'findTasks', ['projectIds' => [1], 'status' => 'open', 'tags' => 'agent']);
+        Assert::assertStringNotContainsString('Agent handoff', $this->toolText($response));
+        Assert::assertStringContainsString('Agent bulk handoff', $this->toolText($response));
+    }
+
+    #[Group('mcp')]
     public function mcpRejectsUnknownTool(AcceptanceTester $I, Scenario $scenario)
     {
         $this->enableMcpPluginOrSkip($I, $scenario);
