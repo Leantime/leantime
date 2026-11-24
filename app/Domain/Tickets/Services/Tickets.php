@@ -3728,6 +3728,8 @@ class Tickets extends BaseService
      *
      * Without projects.viewAll a caller may only read their OWN closures: a caller-supplied $userId
      * for someone else is forced back to the session user (IDOR guard).
+     *
+     * @throws ValidationException When $from or $to is not a real 'Y-m-d' date.
      */
     #[RequiresPermission(TicketsPermissions::VIEW)]
     public function getMyClosedTicketsForRange(?int $userId = null, ?string $from = null, ?string $to = null): array
@@ -3744,12 +3746,13 @@ class Tickets extends BaseService
 
         // Resolve "today" once (in the USER's calendar, not the server's) so a run
         // across midnight can't disagree on bounds.
-        $today = dtHelper()->userNow()->format('Y-m-d');
-        $from = $from ?: $today;
-        $to = $to ?: $today;
+        $userNow = dtHelper()->userNow();
+        $today = $userNow->format('Y-m-d');
+        $fromDay = $this->parseUserDay($from ?: $today, 'from', $userNow->getTimezone());
+        $toDay = $this->parseUserDay($to ?: $today, 'to', $userNow->getTimezone());
         // Tolerate a reversed range rather than returning nothing.
-        if ($from > $to) {
-            [$from, $to] = [$to, $from];
+        if ($fromDay > $toDay) {
+            [$fromDay, $toDay] = [$toDay, $fromDay];
         }
 
         // Candidates: the user's currently-DONE tickets (statusType resolved).
@@ -3764,16 +3767,12 @@ class Tickets extends BaseService
         }
 
         // History timestamps are stored in UTC, but $from/$to are days in the user's calendar.
-        // Turn them into the UTC span those days cover, so work finished in the user's evening
-        // isn't counted on the next day (or the previous one, east of UTC).
-        $userTimezone = dtHelper()->userNow()->getTimezone();
-        $fromUtc = CarbonImmutable::createFromFormat('!Y-m-d', $from, $userTimezone)->startOfDay()->utc();
-        $toUtc = CarbonImmutable::createFromFormat('!Y-m-d', $to, $userTimezone)->endOfDay()->utc();
-
+        // Query the UTC span those days cover, so work finished in the user's evening isn't
+        // counted on the next day (or the previous one, east of UTC).
         $events = $this->ticketRepository->getStatusChangeEvents(
             array_keys($byId),
-            $fromUtc->format('Y-m-d H:i:s'),
-            $toUtc->format('Y-m-d H:i:s')
+            $fromDay->startOfDay()->utc()->format('Y-m-d H:i:s'),
+            $toDay->endOfDay()->utc()->format('Y-m-d H:i:s')
         );
 
         $closed = [];
@@ -3786,7 +3785,7 @@ class Tickets extends BaseService
 
             // Candidates include tasks the user only collaborates on. Those count when the user
             // closed them; a task assigned to the user counts whoever closed it.
-            $closedByUser = (int) ($event['userId'] ?? 0) === $userId;
+            $closedByUser = (int) $event['userId'] === $userId;
             $assignedToUser = (int) ($ticket['editorId'] ?? 0) === $userId;
             if (! $closedByUser && ! $assignedToUser) {
                 continue;
@@ -3802,6 +3801,28 @@ class Tickets extends BaseService
         }
 
         return array_values($closed);
+    }
+
+    /**
+     * Parses a 'Y-m-d' day in the user's timezone. Rejects anything that isn't a real calendar
+     * day: createFromFormat would otherwise roll 2026-02-31 over into March.
+     *
+     * @throws ValidationException When $day is not a real 'Y-m-d' date.
+     */
+    private function parseUserDay(string $day, string $field, \DateTimeZone $timezone): CarbonImmutable
+    {
+        try {
+            $parsed = CarbonImmutable::createFromFormat('!Y-m-d', $day, $timezone);
+        } catch (\Throwable) {
+            $parsed = false;
+        }
+        if ($parsed === false || $parsed === null || $parsed->format('Y-m-d') !== $day) {
+            $message = "{$field} must be a date in Y-m-d format (e.g. 2026-07-27).";
+
+            throw new ValidationException([$field => [$message]], $message);
+        }
+
+        return $parsed;
     }
 
     /**

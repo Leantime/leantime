@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment as EnvironmentCore;
 use Leantime\Core\Exceptions\AuthorizationException;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\DateTimeHelper;
@@ -1210,9 +1211,9 @@ class TicketsServiceTest extends TestCase
                 $capturedTo = $to;
 
                 return [
-                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-10 10:00:00'],
-                    ['ticketId' => 10, 'changeValue' => 0, 'dateModified' => '2026-07-09 09:00:00'],
-                    ['ticketId' => 20, 'changeValue' => 3, 'dateModified' => '2026-07-10 10:00:00'],
+                    ['ticketId' => 10, 'changeValue' => 0, 'userId' => 1, 'dateModified' => '2026-07-10 10:00:00'],
+                    ['ticketId' => 10, 'changeValue' => 0, 'userId' => 1, 'dateModified' => '2026-07-09 09:00:00'],
+                    ['ticketId' => 20, 'changeValue' => 3, 'userId' => 1, 'dateModified' => '2026-07-10 10:00:00'],
                 ];
             },
         ]);
@@ -1296,6 +1297,43 @@ class TicketsServiceTest extends TestCase
         // July 10 in New York (UTC-4 in summer) runs 04:00 UTC to 03:59:59 UTC the next day.
         $this->assertSame('2026-07-10 04:00:00', $capturedFrom);
         $this->assertSame('2026-07-11 03:59:59', $capturedTo);
+    }
+
+    /**
+     * getMyClosedTicketsForRange: a day that isn't on the calendar is rejected, not rolled over
+     * into the next month.
+     */
+    public function test_closed_tickets_range_rejects_a_date_that_does_not_exist(): void
+    {
+        $this->useUserTimezone('UTC');
+        $queried = false;
+
+        $ticketRepository = $this->make(TicketRepository::class, [
+            'simpleTicketQuery' => fn (...$args) => [
+                ['id' => 10, 'type' => 'task', 'projectId' => 5, 'status' => 0, 'editorId' => 1],
+            ],
+            'getStateLabels' => fn (...$args) => [
+                0 => ['statusType' => 'DONE', 'name' => 'Done', 'class' => ''],
+            ],
+            'getStatusChangeEvents' => function () use (&$queried) {
+                $queried = true;
+
+                return [];
+            },
+        ]);
+
+        $service = $this->buildServiceWithTicketRepository($ticketRepository);
+
+        foreach (['2026-02-31', 'yesterday'] as $badDay) {
+            try {
+                $service->getMyClosedTicketsForRange(1, $badDay, '2026-03-05');
+                $this->fail("{$badDay} should be rejected");
+            } catch (ValidationException $e) {
+                $this->assertArrayHasKey('from', $e->getErrorData());
+            }
+        }
+
+        $this->assertFalse($queried, 'history must not be queried for an invalid range');
     }
 
     /**
