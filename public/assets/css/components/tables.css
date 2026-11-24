@@ -736,3 +736,21 @@ td .lt-cell-note {
 td.lt-cell-note {
     display: table-cell;
 }
+
+/* A table cell with a problem (import check): tinted, with a danger edge and the reason under the value. */
+td.lt-cell--problem {
+    background: color-mix(in srgb, var(--red) 7%, transparent);
+    box-shadow: inset 3px 0 0 var(--red);
+}
+
+.lt-cell-problem {
+    display: block;
+    margin-top: 3px;
+    color: var(--red);
+    font-size: var(--font-size-s);
+}
+
+th .lt-cell-note {
+    display: block;
+    font-weight: 400;
+}

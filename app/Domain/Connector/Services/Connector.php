@@ -149,6 +149,15 @@ class Connector
     /** @var array<string, int> Row number of each row message of the review, for listing them in row order. */
     private array $flagRows = [];
 
+    /** @var array<int, array<string, array<int, string>>> Short messages per row number and column of the file. */
+    private array $cellProblems = [];
+
+    /** @var array<string, true> Review messages that are about one cell (shown in that cell). */
+    private array $cellMessages = [];
+
+    /** @var array<int|string, array<string, mixed>> The rows as the last review read them (ids resolved, values normalised). */
+    private array $reviewedValues = [];
+
     /**
      * Reviews the mapped rows of one import and stores them for the import step when nothing
      * is flagged.
@@ -163,6 +172,9 @@ class Connector
     {
         $this->reviewedEntity = (string) $entity;
         $this->flagRows = [];
+        $this->cellProblems = [];
+        $this->cellMessages = [];
+        $this->reviewedValues = [];
         $this->setDefaultProject($defaultProjectId);
         $this->rememberSheetRows($values);
 
@@ -294,7 +306,7 @@ class Connector
             foreach ($values as $index => $typeRow) {
                 $type = strtolower(trim((string) ($typeRow[$matchingTypeField] ?? '')));
                 if ($type !== '' && ! in_array($type, $validTypes, true)) {
-                    $flags[] = $this->flag('notification.import_row_invalid_type', $this->rowNumber($index), $typeRow[$matchingTypeField], implode(', ', $validTypes));
+                    $flags[] = $this->cellFlag($matchingTypeField, 'notification.import_row_invalid_type', $this->rowNumber($index), $typeRow[$matchingTypeField], implode(', ', $validTypes));
                 }
             }
         }
@@ -322,7 +334,8 @@ class Connector
                 }
             }
 
-            $flags[] = $this->flag(
+            $flags[] = $this->cellFlag(
+                $matchingSourceField,
                 'notification.import_row_assignee_not_on_team',
                 $this->rowNumber($index),
                 $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
@@ -349,7 +362,7 @@ class Connector
             foreach ($values as $index => $effortRow) {
                 $storypoints = trim((string) ($effortRow[$matchingStorypointsField] ?? ''));
                 if ($storypoints !== '' && ! in_array($storypoints, $validStorypoints, true)) {
-                    $flags[] = $this->flag('notification.import_row_invalid_effort', $this->rowNumber($index), $storypoints, implode(', ', $validStorypoints));
+                    $flags[] = $this->cellFlag($matchingStorypointsField, 'notification.import_row_invalid_effort', $this->rowNumber($index), $storypoints, implode(', ', $validStorypoints));
                 }
             }
         }
@@ -393,7 +406,7 @@ class Connector
                     if ($user) {
                         $users[] = $user;
                     } else {
-                        $flags[] = $this->flag('notification.import_row_unknown_email', $this->rowNumber($index), trim($email));
+                        $flags[] = $this->cellFlag($matchingUsersSourceField, 'notification.import_row_unknown_email', $this->rowNumber($index), trim($email));
                     }
                 }
                 $row[$matchingUsersSourceField] = $users;
@@ -437,7 +450,7 @@ class Connector
                 } elseif (strtolower($row[$matchingSendInviteSourceField]) == 'no') {
                     $row['sendInvite'] = false;
                 } else {
-                    $flags[] = $this->flag('notification.import_row_yes_or_no', $this->rowNumber($index), $row[$matchingSendInviteSourceField], $this->fieldName('users', 'sendInvite'));
+                    $flags[] = $this->cellFlag($matchingSendInviteSourceField, 'notification.import_row_yes_or_no', $this->rowNumber($index), $row[$matchingSendInviteSourceField], $this->fieldName('users', 'sendInvite'));
                 }
                 if (str_contains($row[$matchingUsernameSourceField], '@')) {
                     $user = $this->userService->getUserByEmail(
@@ -448,14 +461,14 @@ class Connector
                         $row['id'] = $user['id'];
                     }
                 } else {
-                    $flags[] = $this->flag('notification.import_row_not_an_email', $this->rowNumber($index), $row[$matchingUsernameSourceField]);
+                    $flags[] = $this->cellFlag($matchingUsernameSourceField, 'notification.import_row_not_an_email', $this->rowNumber($index), $row[$matchingUsernameSourceField]);
                 }
                 $rolesKey = array_search(
                     strtolower(trim($row[$matchingRoleSourceField])),
                     Roles::getRoles()
                 );
                 if (! $rolesKey) {
-                    $flags[] = $this->flag('notification.import_row_invalid_role', $this->rowNumber($index), $row[$matchingRoleSourceField], implode(', ', Roles::getRoles()));
+                    $flags[] = $this->cellFlag($matchingRoleSourceField, 'notification.import_row_invalid_role', $this->rowNumber($index), $row[$matchingRoleSourceField], implode(', ', Roles::getRoles()));
                 } else {
                     $row[$matchingRoleSourceField] = $rolesKey;
                 }
@@ -500,7 +513,7 @@ class Connector
                 if (is_int($found)) {
                     $row['author'] = $found;
                 } else {
-                    $flags[] = $this->flag($found, $this->rowNumber($index), $person);
+                    $flags[] = $this->cellFlag($matchingAuthorSourceField, $found, $this->rowNumber($index), $person);
                 }
             }
             unset($row);
@@ -513,7 +526,7 @@ class Connector
         if ($matchingCanvasIdSourceField) {
             foreach ($values as $index => $boardRow) {
                 if (! $this->ideaRepo->getSingleCanvas($boardRow[$matchingCanvasIdSourceField])) {
-                    $flags[] = $this->flag('notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
+                    $flags[] = $this->cellFlag($matchingCanvasIdSourceField, 'notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
                 }
             }
         }
@@ -555,7 +568,7 @@ class Connector
         if ($matchingCanvasIdSourceField) {
             foreach ($values as $index => $boardRow) {
                 if (! $this->goalCanvasRepo->getSingleCanvas($boardRow[$matchingCanvasIdSourceField])) {
-                    $flags[] = $this->flag('notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
+                    $flags[] = $this->cellFlag($matchingCanvasIdSourceField, 'notification.import_row_unknown_board', $this->rowNumber($index), $boardRow[$matchingCanvasIdSourceField]);
                 }
             }
         }
@@ -1095,7 +1108,7 @@ class Connector
                 try {
                     dtHelper()->parseUserDateTime($value);
                 } catch (\Exception $e) {
-                    $flags[] = $this->flag('notification.import_row_invalid_date', $this->rowNumber($index), $sourceField, $value);
+                    $flags[] = $this->cellFlag($sourceField, 'notification.import_row_invalid_date', $this->rowNumber($index), $sourceField, $value);
                 }
             }
             unset($dateRow);
@@ -1228,6 +1241,52 @@ class Connector
     }
 
     /**
+     * A row message about one cell. Besides the full message, the review page shows a short one
+     * (the notification.import_cell_* twin of the key, same arguments) in that cell.
+     *
+     * @param  string  $column  The column of the file the cell is in; '' when there is none.
+     * @param  string  $key  A notification.import_row_* key; its first argument is the row number.
+     */
+    private function cellFlag(string $column, string $key, mixed ...$args): string
+    {
+        $message = $this->flag($key, ...$args);
+
+        if ($column !== '' && is_int($args[0] ?? null)) {
+            $cellKey = str_replace('notification.import_row_', 'notification.import_cell_', $key);
+            $this->cellProblems[$args[0]][$column][] = sprintf($this->language->__($cellKey), ...$args);
+            $this->cellMessages[$message] = true;
+        }
+
+        return $message;
+    }
+
+    /**
+     * What the last review found, for the review page: short messages per cell, and the
+     * messages about the whole file or a row without a column of its own.
+     *
+     * @param  array<int, string>  $flags  The messages parseValues() returned.
+     * @return array{cells: array<int, array<string, array<int, string>>>, general: array<int, string>}
+     */
+    public function reviewProblems(array $flags): array
+    {
+        return [
+            'cells' => $this->cellProblems,
+            'general' => array_values(array_filter(array_unique($flags), fn (string $flag) => ! isset($this->cellMessages[$flag]))),
+        ];
+    }
+
+    /**
+     * The rows as the last review read them: people, projects and statuses resolved to ids,
+     * priorities and numbers normalised. Keyed like the rows given to parseValues().
+     *
+     * @return array<int|string, array<string, mixed>>
+     */
+    public function reviewedValues(): array
+    {
+        return $this->reviewedValues;
+    }
+
+    /**
      * The name of a Leantime field as the matching step shows it.
      *
      * @param  string  $entity  Entity key.
@@ -1310,7 +1369,7 @@ class Connector
             if (is_int($found)) {
                 $row['editorId'] = $found;
             } else {
-                $flags[] = $this->flag($found, $this->rowNumber($index), $person);
+                $flags[] = $this->cellFlag($column, $found, $this->rowNumber($index), $person);
             }
         }
         unset($row);
@@ -1402,7 +1461,7 @@ class Connector
                 if ($this->defaultProjectId !== null) {
                     $row['projectId'] = $this->defaultProjectId;
                 } elseif ($column !== '') {
-                    $flags[] = $this->flag('notification.import_row_project_empty', $this->rowNumber($index));
+                    $flags[] = $this->cellFlag($column, 'notification.import_row_project_empty', $this->rowNumber($index));
                 } else {
                     $needsProject = true;
                 }
@@ -1412,7 +1471,7 @@ class Connector
 
             $projectId = $this->projectService->getProjectIdByName($allProjects, $name);
             if (! $projectId) {
-                $flags[] = $this->flag('notification.import_row_unknown_project', $this->rowNumber($index), $name);
+                $flags[] = $this->cellFlag($column, 'notification.import_row_unknown_project', $this->rowNumber($index), $name);
 
                 continue;
             }
@@ -1467,7 +1526,7 @@ class Connector
             foreach ($labels as $number => $label) {
                 $choices[] = $number.' '.$label;
             }
-            $flags[] = $this->flag('notification.import_row_invalid_priority', $this->rowNumber($index), $priority, implode(', ', $choices));
+            $flags[] = $this->cellFlag($column, 'notification.import_row_invalid_priority', $this->rowNumber($index), $priority, implode(', ', $choices));
         }
         unset($row);
 
@@ -1501,7 +1560,7 @@ class Connector
 
                 $number = self::normalisedNumber($cell);
                 if ($number === null) {
-                    $flags[] = $this->flag('notification.import_row_not_a_number', $this->rowNumber($index), $cell, $this->fieldName($entity, $field));
+                    $flags[] = $this->cellFlag($column, 'notification.import_row_not_a_number', $this->rowNumber($index), $cell, $this->fieldName($entity, $field));
                 } else {
                     $row[$column] = $number;
                 }
@@ -1562,6 +1621,8 @@ class Connector
      */
     private function cacheSerializedFieldValues(array $fields, array $values, array $flags): void
     {
+        $this->reviewedValues = $values;
+
         if ($flags !== []) {
             $this->reviewedRows->forget();
 

@@ -43,3 +43,29 @@
 .lt-import-help {
     margin-top: 12px;
 }
+
+/* Check step: counts, where values without a column come from, people with their avatar. */
+.lt-import-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: -8px 0 12px;
+}
+
+.lt-import-defaults {
+    margin: 0 0 16px;
+    padding-inline-start: 18px;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-s);
+}
+
+.lt-import-person {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Done: the success mark is green, not the muted empty-state grey. */
+.lt-import-done .lt-empty-icon {
+    color: var(--green);
+}

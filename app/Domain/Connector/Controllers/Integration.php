@@ -11,6 +11,7 @@ use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
 use Leantime\Domain\Connector\Services\Providers;
+use Leantime\Domain\Connector\Services\ReviewTable;
 use Leantime\Domain\Projects\Services\Projects;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,6 +25,8 @@ class Integration extends Controller
 
     private Projects $projectService;
 
+    private ReviewTable $reviewTable;
+
     /** Entities whose rows go into a project, so the matching step offers a project for all rows. */
     private const PROJECT_ENTITIES = ['tickets', 'milestones'];
 
@@ -34,12 +37,14 @@ class Integration extends Controller
         Providers $providerService,
         IntegrationService $integrationService,
         Connector $connectorService,
-        Projects $projectService
+        Projects $projectService,
+        ReviewTable $reviewTable
     ): void {
         $this->providerService = $providerService;
         $this->integrationService = $integrationService;
         $this->connectorService = $connectorService;
         $this->projectService = $projectService;
+        $this->reviewTable = $reviewTable;
     }
 
     /**
@@ -175,12 +180,17 @@ class Integration extends Controller
         $values = $provider->geValues();
         $fields = $this->connectorService->getFieldMappings($params);
         $projectId = is_numeric($params['importProjectId'] ?? null) ? (int) $params['importProjectId'] : null;
-        $flags = $this->connectorService->parseValues($fields, $values, session('currentImportEntity'), $projectId);
+        $entity = (string) session('currentImportEntity');
+        $flags = $this->connectorService->parseValues($fields, $values, $entity, $projectId);
+        $flags = is_array($flags) ? $flags : [];
+        $problems = $this->connectorService->reviewProblems($flags);
+        $leantimeFields = $this->integrationService->getEntityFields($entity);
 
-        $this->tpl->assign('values', $values);
-        $this->tpl->assign('fields', $fields);
-        $this->tpl->assign('leantimeFields', $this->integrationService->getEntityFields((string) session('currentImportEntity')));
+        $this->tpl->assign('entity', $entity);
+        $this->tpl->assign('entityName', $this->integrationService->getAvailableEntities()[$entity]['name'] ?? $entity);
         $this->tpl->assign('flags', $flags);
+        $this->tpl->assign('generalProblems', $problems['general']);
+        $this->tpl->assign('review', $this->reviewTable->build($entity, $fields, $values, $this->connectorService->reviewedValues(), $problems, $leantimeFields, $projectId));
         $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');
@@ -220,8 +230,30 @@ class Integration extends Controller
         }
 
         $this->tpl->assign('importResult', $result);
+        $this->tpl->assign('importedEntity', (string) $payload['entity']);
+        $this->tpl->assign('importedProjects', $this->projectsOf($payload['values']));
 
         return $this->tpl->display('connector.integrationConfirm');
+    }
+
+    /**
+     * The projects the imported rows went into, by id.
+     *
+     * @param  array<int, array<string, mixed>>  $rows  The imported rows (to-dos and milestones carry projectId).
+     * @return array<int, string> Project id => name.
+     */
+    private function projectsOf(array $rows): array
+    {
+        $projects = [];
+        foreach ($rows as $row) {
+            $projectId = (int) ($row['projectId'] ?? 0);
+            if ($projectId > 0 && ! isset($projects[$projectId])) {
+                $project = $this->projectService->getProject($projectId);
+                $projects[$projectId] = is_array($project) ? (string) $project['name'] : (string) $projectId;
+            }
+        }
+
+        return $projects;
     }
 
     /**

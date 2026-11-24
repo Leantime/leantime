@@ -37,10 +37,11 @@ class ConnectorTicketImportTest extends TestCase
         $twoArguments = ['notification.import_mapped_twice', 'notification.import_row_unknown_email', 'notification.import_row_unknown_person', 'notification.import_row_person_ambiguous', 'notification.import_row_unknown_project'];
 
         return $this->make(Language::class, [
+            // A cell message takes the same arguments as its row message.
             '__' => fn (string $index, string $default = '') => match (true) {
                 in_array($index, $noArgument, true) => $index,
-                in_array($index, $oneArgument, true) => $index.'|%1$s',
-                in_array($index, $twoArguments, true) => $index.'|%1$s|%2$s',
+                in_array(str_replace('import_cell_', 'import_row_', $index), $oneArgument, true) => $index.'|%1$s',
+                in_array(str_replace('import_cell_', 'import_row_', $index), $twoArguments, true) => $index.'|%1$s|%2$s',
                 default => $index.'|%1$s|%2$s|%3$s',
             },
         ]);
@@ -716,5 +717,38 @@ class ConnectorTicketImportTest extends TestCase
         // The project check runs first, but row 2's problems come before row 3's.
         $this->assertSame([2, 2, 3], array_map(fn (string $flag) => (int) explode('|', $flag)[1], $flags));
         $this->assertStringStartsWith('notification.import_row_unknown_project|3|', $flags[2]);
+    }
+
+    public function test_cell_problems_are_kept_per_row_and_column_and_file_problems_stay_general(): void
+    {
+        $calls = [];
+        $connector = $this->connector($calls, [
+            'getPriorityLabels' => fn () => ['1' => 'Critical', '2' => 'High', '3' => 'Medium', '4' => 'Low', '5' => 'Lowest'],
+        ], [
+            'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+            'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+            'isUserAssignedToProject' => fn () => true,
+        ]);
+
+        $flags = $connector->parseValues([
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'Priority', 'leantimeField' => 'priority'],
+            ['sourceField' => 'Hours', 'leantimeField' => 'planHours'],
+        ], [
+            ['Project' => 'Website', 'Priority' => 'Urgent', 'Hours' => 'abc'],
+            ['Project' => 'Nowhere', 'Priority' => 'high', 'Hours' => '1,5'],
+        ], 'tickets');
+
+        $problems = $connector->reviewProblems($flags);
+
+        $this->assertSame(['Priority', 'Hours'], array_keys($problems['cells'][2]));
+        $this->assertStringStartsWith('notification.import_cell_invalid_priority|2|Urgent|', $problems['cells'][2]['Priority'][0]);
+        $this->assertSame(['Project'], array_keys($problems['cells'][3]));
+        // The missing Title column is about the file, not a cell.
+        $this->assertSame(['notification.import_column_required|Title'], $problems['general']);
+
+        // The review keeps the rows as it read them: the priority name became its number.
+        $this->assertSame('2', $connector->reviewedValues()[1]['Priority']);
+        $this->assertSame('1.5', $connector->reviewedValues()[1]['Hours']);
     }
 }
