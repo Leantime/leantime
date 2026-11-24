@@ -96,7 +96,10 @@
                 }
 
                 $dependencyList = [];
-                if ($mlst->milestoneid != 0) {
+                if ($mlst->type == 'milestone') {
+                    // A milestone can depend on several milestones.
+                    $dependencyList = $mlst->milestoneDependencies ?? [];
+                } elseif ((int) $mlst->milestoneid > 0) {
                     $dependencyList[] = $mlst->milestoneid;
                 }
 

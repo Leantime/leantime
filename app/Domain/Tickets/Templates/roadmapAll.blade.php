@@ -99,10 +99,8 @@
                     $sortIndex = $mlst->sortIndex;
                 }
 
-                $dependencyList = [];
-                if ($mlst->milestoneid != 0) {
-                    $dependencyList[] = $mlst->milestoneid;
-                }
+                // A milestone can depend on several milestones.
+                $dependencyList = $mlst->milestoneDependencies ?? [];
 
                 if ($mlst->dependingTicketId != 0) {
                     $dependencyList[] = $mlst->dependingTicketId;

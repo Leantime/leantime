@@ -9,5 +9,5 @@ class AppSettings
 {
     public string $appVersion = '3.17.0';
 
-    public string $dbVersion = '3.5.37';
+    public string $dbVersion = '3.5.38';
 }

@@ -988,7 +988,26 @@ class Tickets
 
         $results = $query->get();
 
-        return array_map(fn ($item) => (array) $item, $results->toArray());
+        $rows = array_map(fn ($item) => (array) $item, $results->toArray());
+
+        $milestoneIds = [];
+        foreach ($rows as $row) {
+            if (($row['type'] ?? '') === 'milestone') {
+                $milestoneIds[] = (int) $row['id'];
+            }
+        }
+
+        if ($milestoneIds !== []) {
+            $dependencies = $this->getMilestoneDependencies($milestoneIds);
+            foreach ($rows as &$row) {
+                if (($row['type'] ?? '') === 'milestone') {
+                    $row['milestoneDependencies'] = $dependencies[(int) $row['id']] ?? [];
+                }
+            }
+            unset($row);
+        }
+
+        return $rows;
     }
 
     public function simpleTicketQuery(?int $userId, ?int $projectId, array $types = [], bool $excludeClosedProjects = false): array|false
@@ -1366,6 +1385,10 @@ class Tickets
         }
 
         $values->collaborators = $this->getCollaborators($id);
+
+        if (($values->type ?? '') === 'milestone') {
+            $values->milestoneDependencies = $this->getMilestoneDependencies([(int) $id])[(int) $id] ?? [];
+        }
 
         return $values;
     }
@@ -1790,6 +1813,20 @@ class Tickets
                 }
             }
             $tickets[] = $ticket;
+        }
+
+        $milestoneIds = [];
+        foreach ($tickets as $ticket) {
+            if ($ticket->type === 'milestone') {
+                $milestoneIds[] = (int) $ticket->id;
+            }
+        }
+
+        $dependencies = $this->getMilestoneDependencies($milestoneIds);
+        foreach ($tickets as $ticket) {
+            if ($ticket->type === 'milestone') {
+                $ticket->milestoneDependencies = $dependencies[(int) $ticket->id] ?? [];
+            }
         }
 
         return $tickets;
@@ -2600,10 +2637,128 @@ class Tickets
             ->where('milestoneid', $id)
             ->update(['milestoneid' => '']);
 
+        // Drop the additional dependencies this milestone has and the ones other milestones have on it
+        $this->connection->table('zp_entity_relationship')
+            ->where('relationship', EntityRelationshipEnum::DependsOn->value)
+            ->where('entityAType', 'Ticket')
+            ->where('entityBType', 'Ticket')
+            ->where(function ($query) use ($id) {
+                $query->where('entityA', $id)->orWhere('entityB', $id);
+            })
+            ->delete();
+
         // Delete the milestone
         $this->connection->table('zp_tickets')
             ->where('id', $id)
             ->delete();
+
+        return true;
+    }
+
+    /**
+     * Resolves the milestones the given milestones depend on. Every dependency is a depends_on
+     * relationship (entityA = the dependent milestone, entityB = its prerequisite), listed in the
+     * order they were added.
+     *
+     * @param  array<int, int|string>  $milestoneIds  Milestone ticket ids.
+     * @return array<int, array<int, int>> Dependency ids keyed by milestone id (milestones without dependencies map to an empty array).
+     */
+    public function getMilestoneDependencies(array $milestoneIds): array
+    {
+        $milestoneIds = array_values(array_unique(array_filter(array_map('intval', $milestoneIds), static fn (int $id) => $id > 0)));
+
+        $dependencies = array_fill_keys($milestoneIds, []);
+
+        foreach (array_chunk($milestoneIds, 500) as $idChunk) {
+            $edgeRows = $this->connection->table('zp_entity_relationship')
+                ->select(['entityA', 'entityB'])
+                ->whereIn('entityA', $idChunk)
+                ->where('entityAType', 'Ticket')
+                ->where('entityBType', 'Ticket')
+                ->where('relationship', EntityRelationshipEnum::DependsOn->value)
+                ->orderBy('id')
+                ->get();
+
+            foreach ($edgeRows as $row) {
+                $dependencies[(int) $row->entityA][] = (int) $row->entityB;
+            }
+        }
+
+        return array_map(static fn (array $ids) => array_values(array_unique($ids)), $dependencies);
+    }
+
+    /**
+     * Resolves the dependencies of every milestone in a project.
+     *
+     * @return array<int, array<int, int>> Dependency ids keyed by milestone id.
+     */
+    public function getProjectMilestoneDependencies(int $projectId): array
+    {
+        $milestoneIds = $this->connection->table('zp_tickets')
+            ->where('projectId', $projectId)
+            ->where('type', 'milestone')
+            ->pluck('id')
+            ->all();
+
+        return $this->getMilestoneDependencies($milestoneIds);
+    }
+
+    /**
+     * Returns the ids that belong to milestones of the given project.
+     *
+     * @param  array<int, int>  $milestoneIds  Candidate milestone ids.
+     * @return array<int, int> The candidates that are milestones of the project, in their given order.
+     */
+    public function filterMilestoneIdsInProject(array $milestoneIds, int $projectId): array
+    {
+        if (empty($milestoneIds)) {
+            return [];
+        }
+
+        $valid = $this->connection->table('zp_tickets')
+            ->whereIn('id', $milestoneIds)
+            ->where('projectId', $projectId)
+            ->where('type', 'milestone')
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        return array_values(array_filter($milestoneIds, static fn (int $id) => in_array($id, $valid, true)));
+    }
+
+    /**
+     * Replaces the dependencies of a milestone with the given prerequisites.
+     *
+     * @param  int  $milestoneId  The dependent milestone.
+     * @param  array<int, int>  $dependencyIds  The milestones it depends on.
+     * @param  int|null  $createdBy  The acting user (null when no user is acting).
+     */
+    public function setMilestoneDependencies(int $milestoneId, array $dependencyIds, ?int $createdBy): bool
+    {
+        $now = dtHelper()->dbNow()->formatDateTimeForDb();
+
+        $rows = array_map(fn (int $dependencyId) => [
+            'entityA' => $milestoneId,
+            'entityAType' => 'Ticket',
+            'entityB' => $dependencyId,
+            'entityBType' => 'Ticket',
+            'relationship' => EntityRelationshipEnum::DependsOn->value,
+            'createdOn' => $now,
+            'createdBy' => $createdBy,
+        ], array_values(array_unique($dependencyIds)));
+
+        $this->connection->transaction(function () use ($milestoneId, $rows) {
+            $this->connection->table('zp_entity_relationship')
+                ->where('entityA', $milestoneId)
+                ->where('entityAType', 'Ticket')
+                ->where('entityBType', 'Ticket')
+                ->where('relationship', EntityRelationshipEnum::DependsOn->value)
+                ->delete();
+
+            if (! empty($rows)) {
+                $this->connection->table('zp_entity_relationship')->insert($rows);
+            }
+        });
 
         return true;
     }

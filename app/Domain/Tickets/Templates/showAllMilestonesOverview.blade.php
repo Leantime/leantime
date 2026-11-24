@@ -104,15 +104,19 @@
                             @dispatchEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets])
                             <td data-order="{{ $row->headline }}"><a href="#/tickets/editMilestone/{{ $row->id }}">{{ $row->headline }}</a></td>
                             @php
-                            if ($row->milestoneid != '' && $row->milestoneid != 0) {
-                                $milestoneHeadline = $tpl->escape($row->milestoneHeadline);
-                            } else {
-                                $milestoneHeadline = __('label.no_milestone');
+                            // A milestone's dependencies are relationship rows; the overview lists milestones of
+                            // several projects, so the names come from the listed milestones themselves.
+                            $dependencyHeadlines = [];
+                            foreach ($allTickets as $milestoneOption) {
+                                if (in_array((int) $milestoneOption->id, array_map('intval', $row->milestoneDependencies ?? []), true)) {
+                                    $dependencyHeadlines[] = $milestoneOption->headline;
+                                }
                             }
+                            $milestoneHeadline = $dependencyHeadlines !== [] ? implode(', ', $dependencyHeadlines) : __('label.no_dependency');
                             @endphp
 
-                            <td class="dropdown-cell" data-order="{{ $milestoneHeadline }}">
-                                <x-tickets::chip-milestone :float="false" :ticket-id="$row->id" :milestone-id="$row->milestoneid" :headline="$row->milestoneHeadline ?? ''" :color="$row->milestoneColor ?? ''" :milestones="$milestones" />
+                            <td data-order="{{ $milestoneHeadline }}">
+                                <x-tickets::milestone-dependencies :dependencies="$row->milestoneDependencies ?? []" :milestones="$allTickets" />
                             </td>
 
                             @php
