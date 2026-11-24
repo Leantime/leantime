@@ -648,15 +648,25 @@ function renderEmojiList(editor, view) {
         shortcodeSpan.textContent = ':' + item.shortcode + ':';
         row.appendChild(shortcodeSpan);
 
+        // Keep the focus in the editor, so people can type on after they pick an emoji.
+        row.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+        });
+
         row.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             insertEmoji(editor, view, item);
         });
 
+        // Only move the highlight. Redrawing the list here replaces the row under the mouse, the
+        // browser then fires mouseenter on the new row, and the click never reaches a row.
         row.addEventListener('mouseenter', function() {
             currentSelectedIndex = index;
-            renderEmojiList(editor, view);
+            list.querySelectorAll('.tiptap-emoji-popup__item--selected').forEach(function(selected) {
+                selected.classList.remove('tiptap-emoji-popup__item--selected');
+            });
+            row.classList.add('tiptap-emoji-popup__item--selected');
         });
 
         list.appendChild(row);

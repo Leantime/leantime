@@ -7,6 +7,7 @@ use Leantime\Core\Configuration\Environment;
 use Leantime\Core\UI\Composer;
 use Leantime\Core\UI\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 class Header extends Composer
 {
@@ -34,6 +35,12 @@ class Header extends Composer
         $this->themeCore = $themeCore;
     }
 
+    /**
+     * Variables for the page header: site name, theme, colors, background and the
+     * editor settings that the page's JavaScript reads (window.leantime.editorSettings).
+     *
+     * @return array<string, mixed>
+     */
     public function with(): array
     {
         // Batch-preload all theme settings in a single query on first load.
@@ -93,6 +100,7 @@ class Header extends Composer
             'themeBgCss' => self::toCssString((string) $this->themeCore->getBackgroundImage()),
             'themeOpacity' => $backgroundOpacity,
             'themeType' => $this->themeCore->getBackgroundType(),
+            'emojiSuggestions' => $this->settingsRepo->getSetting(SettingService::SETTING_EMOJI_SUGGESTIONS) !== '0',
         ];
     }
 

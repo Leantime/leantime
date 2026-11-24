@@ -468,8 +468,12 @@ function createTiptapEditor(elementOrSelector, options) {
         // Details/Collapsible sections
         extensions.push.apply(extensions, createDetailsExtension());
 
-        // Emoji picker
-        extensions.push(createEmojiExtension());
+        // Emoji suggestions when typing ":". Admins can switch them off for everyone in the
+        // company settings; the /emoji slash command does not need this extension.
+        var editorSettings = window.leantime.editorSettings || {};
+        if (editorSettings.emojiSuggestions !== false) {
+            extensions.push(createEmojiExtension());
+        }
 
         // Table of Contents
         extensions.push.apply(extensions, createTableOfContentsExtension());

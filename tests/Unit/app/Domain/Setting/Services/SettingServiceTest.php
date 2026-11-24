@@ -2,6 +2,7 @@
 
 namespace Unit\app\Domain\Setting\Services;
 
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Services\PushRelay;
@@ -225,5 +226,123 @@ class SettingServiceTest extends TestCase
         $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'full'])[PushRelay::SETTING_CONTENT]);
         $this->assertSame(PushRelay::CONTENT_NAMES, $this->saveMainDetails(['pushRelayContent' => 'names'])[PushRelay::SETTING_CONTENT]);
         $this->assertSame(PushRelay::CONTENT_FULL, $this->saveMainDetails(['pushRelayContent' => 'everything'])[PushRelay::SETTING_CONTENT]);
+    }
+
+    // ---------------------------------------------------------------------
+    // Emoji suggestions in the text editor, a company-wide switch.
+    // ---------------------------------------------------------------------
+
+    /**
+     * The form posts '0' (hidden input) or '1' (checked box), and RPC callers may send booleans.
+     * The switch is saved on its own, without the main company details.
+     *
+     * @dataProvider emojiSwitchProvider
+     */
+    public function test_the_emoji_switch_is_saved_on_its_own_as_a_boolean(mixed $sent, string $stored): void
+    {
+        $written = [];
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn () => false,
+            'saveSetting' => function ($key, $value) use (&$written) {
+                $written[$key] = $value;
+
+                return true;
+            },
+        ]);
+
+        $saved = $this->makeService(settingsRepo: $settingsRepo)->saveCompanySettings(['emojiSuggestions' => $sent]);
+
+        $this->assertTrue($saved);
+        $this->assertSame([SettingService::SETTING_EMOJI_SUGGESTIONS => $stored], $written);
+    }
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function emojiSwitchProvider(): array
+    {
+        return [
+            '"1"' => ['1', '1'],
+            'true' => [true, '1'],
+            '"0"' => ['0', '0'],
+            'false' => [false, '0'],
+            '"false"' => ['false', '0'],
+        ];
+    }
+
+    /**
+     * A value that is not a boolean is rejected before anything is saved: it must neither switch
+     * the suggestions off nor leave the rest of the form half saved.
+     *
+     * @dataProvider invalidEmojiSwitchProvider
+     */
+    public function test_an_invalid_emoji_switch_is_rejected_before_anything_is_saved(mixed $sent): void
+    {
+        $written = [];
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn () => false,
+            'saveSetting' => function ($key, $value) use (&$written) {
+                $written[$key] = $value;
+
+                return true;
+            },
+        ]);
+
+        try {
+            $this->makeService(settingsRepo: $settingsRepo)->saveCompanySettings(
+                ['emojiSuggestions' => $sent, 'name' => 'Acme', 'language' => 'en-US', 'messageFrequency' => 3600]
+            );
+            $this->fail('An invalid value must throw a ValidationException.');
+        } catch (ValidationException $exception) {
+            $this->assertSame([], $written);
+        }
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidEmojiSwitchProvider(): array
+    {
+        return [
+            'a word' => ['enabled'],
+            'a sentence' => ['yes please'],
+            'an array' => [['1']],
+            'null' => [null],
+        ];
+    }
+
+    /**
+     * The switch is on by default, so a save that doesn't carry it (API, other forms) must not
+     * switch it off.
+     */
+    public function test_a_save_without_the_emoji_switch_leaves_it_alone(): void
+    {
+        $this->assertArrayNotHasKey(SettingService::SETTING_EMOJI_SUGGESTIONS, $this->saveMainDetails([]));
+    }
+
+    /**
+     * @dataProvider emojiSuggestionsStoredProvider
+     */
+    public function test_emoji_suggestions_are_on_unless_switched_off(string|false $stored, bool $expected): void
+    {
+        $settingsRepo = $this->make(SettingRepository::class, [
+            'getSetting' => fn ($key) => $key === SettingService::SETTING_EMOJI_SUGGESTIONS ? $stored : false,
+        ]);
+
+        $view = $this->makeService(settingsRepo: $settingsRepo)->getCompanySettings('');
+
+        $this->assertSame($expected, $view['companySettings']['emojiSuggestions']);
+    }
+
+    /**
+     * @return array<string, array{string|false, bool}>
+     */
+    public static function emojiSuggestionsStoredProvider(): array
+    {
+        return [
+            'never saved' => [false, true],
+            'switched on' => ['1', true],
+            'switched off' => ['0', false],
+        ];
     }
 }

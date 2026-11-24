@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Events\DispatchesEvents;
+use Leantime\Core\Exceptions\ValidationException;
 use Leantime\Core\Files\Contracts\FileManagerInterface;
 use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
 use Leantime\Domain\Notifications\Models\Notification;
@@ -24,6 +25,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class Setting
 {
     use DispatchesEvents;
+
+    /** Whether the text editor suggests emojis when people type ":". On unless stored as '0'. */
+    public const SETTING_EMOJI_SUGGESTIONS = 'companysettings.editor.emojiSuggestions';
 
     private FileManagerInterface $fileManager;
 
@@ -283,8 +287,8 @@ class Setting
      *
      * Encapsulates the company-settings defaulting/fallback chain: colors
      * (including legacy mainColor fallback), sitename, language, message
-     * frequency, default notification event types, and the default notification
-     * relevance level.
+     * frequency, the editor's emoji suggestions, default notification event
+     * types, and the default notification relevance level.
      *
      * @param  string  $logoUrl  The resolved logo URL from the theme.
      * @return array{
@@ -309,6 +313,7 @@ class Setting
             'telemetryActive' => $this->settingsRepo->getSetting('companysettings.telemetry.optOut') !== 'true',
             'telemetryAllowedByConfig' => (app('config')->allowTelemetry ?? true) === true,
             'messageFrequency' => '',
+            'emojiSuggestions' => $this->settingsRepo->getSetting(self::SETTING_EMOJI_SUGGESTIONS) !== '0',
         ];
 
         $mainColor = $this->settingsRepo->getSetting('companysettings.mainColor');
@@ -375,11 +380,13 @@ class Setting
      * Owns the post-time persistence: look & feel (color save + legacy mainColor
      * cleanup + session sync), main details (sitename/language/messageFrequency),
      * localization cache invalidation, notification event-type filtering and
-     * relevance validation, session sync, and telemetry opt-out orchestration.
+     * relevance validation, session sync, telemetry opt-out orchestration, and
+     * the editor's emoji suggestions switch.
      *
      * @param  array<string, mixed>  $params  The submitted form parameters.
      * @return bool True when a settings block was persisted, false when nothing changed.
      *
+     * @throws ValidationException When emojiSuggestions is sent but is not a boolean. Nothing is saved then.
      * @throws \Exception When telemetry opt-out fails.
      *
      * @api
@@ -388,6 +395,25 @@ class Setting
     public function saveCompanySettings(array $params): bool
     {
         $saved = false;
+
+        // Emoji suggestions in the text editor. The switch is on by default, so it is written only
+        // when sent: a caller without it (API, other forms) must not switch it off. The form posts
+        // a hidden '0' before the checkbox, so an unchecked box arrives as '0'. A value that is not
+        // a boolean is rejected here, before any other setting is saved, so it can neither switch
+        // the suggestions off nor leave the form half saved.
+        if (array_key_exists('emojiSuggestions', $params)) {
+            $emojiSuggestions = $params['emojiSuggestions'] === null
+                ? null
+                : filter_var($params['emojiSuggestions'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($emojiSuggestions === null) {
+                $message = 'emojiSuggestions must be a boolean: true, false, 1 or 0.';
+
+                throw new ValidationException(['emojiSuggestions' => [$message]], $message);
+            }
+
+            $this->settingsRepo->saveSetting(self::SETTING_EMOJI_SUGGESTIONS, $emojiSuggestions ? '1' : '0');
+            $saved = true;
+        }
 
         // Look & feel updates
         if (isset($params['primarycolor']) && $params['primarycolor'] != '') {
