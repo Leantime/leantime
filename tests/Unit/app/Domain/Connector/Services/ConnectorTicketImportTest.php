@@ -9,6 +9,7 @@ use Leantime\Domain\Connector\Services\Connector;
 use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
 use Leantime\Domain\Ideas\Repositories\Ideas;
 use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Services\Users;
@@ -42,7 +43,7 @@ class ConnectorTicketImportTest extends TestCase
      * @param  array<string, mixed>  $ticketOverrides  Extra stubbed Tickets service methods.
      * @param  array<string, mixed>  $projectOverrides  Stubbed Projects service methods.
      */
-    private function connector(array &$calls, array $ticketOverrides = [], array $projectOverrides = [], array $userOverrides = [], array $goalOverrides = [], array $ideaOverrides = []): Connector
+    private function connector(array &$calls, array $ticketOverrides = [], array $projectOverrides = [], array $userOverrides = [], array $goalOverrides = [], array $ideaOverrides = [], array $ticketRepoOverrides = []): Connector
     {
         $tickets = $this->make(Tickets::class, array_merge([
             'updateTicket' => function ($values) use (&$calls) {
@@ -62,7 +63,7 @@ class ConnectorTicketImportTest extends TestCase
             $this->make(Users::class, $userOverrides),
             $this->make(Projects::class, $projectOverrides),
             $tickets,
-            $this->make(TicketRepository::class),
+            $this->make(TicketRepository::class, $ticketRepoOverrides),
             $this->make(Goalcanvas::class, $goalOverrides),
             $this->make(Ideas::class, $ideaOverrides),
             $this->language(),
@@ -329,5 +330,72 @@ class ConnectorTicketImportTest extends TestCase
         $this->assertSame([3], array_column($ideas->failures, 'row'));
 
         $this->assertSame([['project', 3], ['goal', '20'], ['idea', '30']], $edited, 'only items that exist on the named board are edited');
+    }
+
+    public function test_an_update_that_keeps_an_assignee_who_left_the_team_is_not_flagged(): void
+    {
+        $calls = [];
+        $connector = $this->connector(
+            $calls,
+            ['getStatusLabels' => fn () => []],
+            [
+                'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+                'getProjectIdByName' => fn ($all, $name) => $name === 'Website' ? 9 : false,
+                // Ben (2) has left the team.
+                'isUserAssignedToProject' => fn (int $userId, int $projectId) => $userId !== 2,
+            ],
+            ['getUserByEmail' => fn ($email) => ['id' => $email === 'ben@example.com' ? 2 : 1]],
+            [],
+            [],
+            ['getTicket' => function ($id) {
+                $ticket = new TicketModel;
+                $ticket->id = (int) $id;
+                $ticket->editorId = (int) $id === 12 ? 2 : 1;
+
+                return $ticket;
+            }],
+        );
+
+        $fields = [
+            ['sourceField' => 'ID', 'leantimeField' => 'id'],
+            ['sourceField' => 'Title', 'leantimeField' => 'headline'],
+            ['sourceField' => 'Project', 'leantimeField' => 'projectName'],
+            ['sourceField' => 'Assignee', 'leantimeField' => 'editorId'],
+        ];
+        $values = [
+            // To-do 12 is already Ben's: renaming it is fine.
+            ['ID' => '12', 'Title' => 'Renamed', 'Project' => 'Website', 'Assignee' => 'ben@example.com'],
+            // To-do 13 is Ada's: giving it to Ben adds someone off the team.
+            ['ID' => '13', 'Title' => 'Moved to Ben', 'Project' => 'Website', 'Assignee' => 'ben@example.com'],
+        ];
+
+        $joined = implode("\n", $connector->parseValues($fields, $values, 'tickets'));
+
+        $this->assertStringNotContainsString('import_row_assignee_not_on_team|2|', $joined);
+        $this->assertStringContainsString('notification.import_row_assignee_not_on_team|3|ben@example.com|Website', $joined);
+    }
+
+    public function test_a_clean_review_stores_its_entity_with_the_rows(): void
+    {
+        $calls = [];
+        $connector = $this->connector(
+            $calls,
+            ['getStatusLabels' => fn () => []],
+            [
+                'getAllProjects' => fn () => [['id' => 9, 'name' => 'Website']],
+                'getProjectIdByName' => fn ($all, $name) => 9,
+                'isUserAssignedToProject' => fn () => true,
+            ],
+        );
+
+        $flags = $connector->parseValues(
+            [['sourceField' => 'Title', 'leantimeField' => 'headline'], ['sourceField' => 'Project', 'leantimeField' => 'projectName']],
+            [['Title' => 'One', 'Project' => 'Website']],
+            'tickets'
+        );
+
+        $this->assertSame([], $flags);
+        $this->assertSame('tickets', session('serImportEntity'));
+        $this->assertNotEmpty(session('serImportToken'));
     }
 }

@@ -93,8 +93,22 @@ class Connector
         return $fields;
     }
 
+    /** The entity being reviewed; stored with the reviewed rows so the import uses the same one. */
+    private string $reviewedEntity = '';
+
+    /**
+     * Reviews the mapped rows of one import and stores them for the import step when nothing
+     * is flagged.
+     *
+     * @param  array  $fields  Column mappings (sourceField, leantimeField).
+     * @param  array  $values  Rows from the file.
+     * @param  string  $entity  Entity key (tickets, projects, users, ideas, goals, milestones).
+     * @return array|false The review flags, or false for an unknown entity.
+     */
     public function parseValues($fields, $values, $entity)
     {
+        $this->reviewedEntity = (string) $entity;
+
         if ($entity == 'tickets') {
             return $this->parseTickets($fields, $values);
         } elseif ($entity == 'projects') {
@@ -238,18 +252,41 @@ class Connector
         }
 
         // Assignees must be on the project's team, or the save fails at import time. Checking it
-        // here shows the problem on the review step, before anything is written.
+        // here shows the problem on the review step, before anything is written. Like the ticket
+        // service, only a new assignee is checked: an update that keeps a to-do's assignee saves
+        // even if that person has left the team since.
+        $matchingIdField = '';
+        foreach ($fields as $item) {
+            if ($item['leantimeField'] === 'id') {
+                $matchingIdField = $item['sourceField'];
+                break;
+            }
+        }
         foreach ($values as $index => $teamRow) {
             $editorId = (int) ($teamRow['editorId'] ?? 0);
             $projectId = (int) ($teamRow['projectId'] ?? 0);
-            if ($editorId > 0 && $projectId > 0 && ! $this->projectService->isUserAssignedToProject($editorId, $projectId)) {
-                $flags[] = sprintf(
-                    $this->language->__('notification.import_row_assignee_not_on_team'),
-                    $this->rowNumber($index),
-                    $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
-                    $matchingProjectSourceField !== '' ? (string) ($teamRow[$matchingProjectSourceField] ?? $projectId) : (string) $projectId
-                );
+            if ($editorId <= 0 || $projectId <= 0) {
+                continue;
             }
+
+            if ($this->projectService->isUserAssignedToProject($editorId, $projectId)) {
+                continue;
+            }
+
+            $ticketId = $matchingIdField !== '' ? trim((string) ($teamRow[$matchingIdField] ?? '')) : '';
+            if (is_numeric($ticketId)) {
+                $existing = $this->ticketRepository->getTicket((int) $ticketId);
+                if ($existing && (int) ($existing->editorId ?? 0) === $editorId) {
+                    continue;
+                }
+            }
+
+            $flags[] = sprintf(
+                $this->language->__('notification.import_row_assignee_not_on_team'),
+                $this->rowNumber($index),
+                $matchingSourceField !== '' ? (string) ($teamRow[$matchingSourceField] ?? $editorId) : (string) $editorId,
+                $matchingProjectSourceField !== '' ? (string) ($teamRow[$matchingProjectSourceField] ?? $projectId) : (string) $projectId
+            );
         }
 
         // Storypoints/Effort Field Validation
@@ -1159,7 +1196,7 @@ class Connector
     private function cacheSerializedFieldValues(array $fields, array $values, array $flags): void
     {
         if ($flags !== []) {
-            session()->forget(['serValues', 'serFields', 'serImportToken']);
+            session()->forget(['serValues', 'serFields', 'serImportEntity', 'serImportToken']);
 
             return;
         }
@@ -1167,6 +1204,7 @@ class Connector
         session([
             'serFields' => serialize($fields),
             'serValues' => serialize($values),
+            'serImportEntity' => $this->reviewedEntity,
             'serImportToken' => Uuid::uuid4()->toString(),
         ]);
     }

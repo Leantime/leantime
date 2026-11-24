@@ -27,6 +27,7 @@ class IntegrationsImportClaimTest extends TestCase
         session([
             'serValues' => serialize([['Title' => 'One']]),
             'serFields' => serialize([['sourceField' => 'Title', 'leantimeField' => 'headline']]),
+            'serImportEntity' => 'tickets',
             'serImportToken' => $token,
         ]);
     }
@@ -36,14 +37,15 @@ class IntegrationsImportClaimTest extends TestCase
         $token = 'claim-test-'.uniqid();
         $this->storeReviewedRows($token);
 
-        $first = $this->service()->claimCachedImportPayload();
+        $first = $this->service()->claimCachedImportPayload($token);
         $this->assertSame([['Title' => 'One']], $first['values']);
+        $this->assertSame('tickets', $first['entity'], 'the import uses the entity that was reviewed');
         $this->assertNull(session('serValues'), 'the claim clears the session');
 
         // A second Confirm that read the session before the first request saved its changes
         // still sees the same rows and token. The token was claimed, so it gets nothing.
         $this->storeReviewedRows($token);
-        $second = $this->service()->claimCachedImportPayload();
+        $second = $this->service()->claimCachedImportPayload($token);
         $this->assertSame([], $second['values']);
     }
 
@@ -52,6 +54,15 @@ class IntegrationsImportClaimTest extends TestCase
         session(['serValues' => serialize([['Title' => 'One']]), 'serFields' => serialize([['sourceField' => 'Title', 'leantimeField' => 'headline']])]);
         session()->forget('serImportToken');
 
-        $this->assertSame([], $this->service()->claimCachedImportPayload()['values']);
+        $this->assertSame([], $this->service()->claimCachedImportPayload('')['values']);
+    }
+
+    public function test_a_confirm_from_an_older_review_imports_nothing(): void
+    {
+        // Tab A reviewed with token "a"; tab B has reviewed another file since.
+        $this->storeReviewedRows('claim-test-b-'.uniqid());
+
+        $this->assertSame([], $this->service()->claimCachedImportPayload('claim-test-a')['values']);
+        $this->assertNotNull(session('serValues'), 'tab B can still confirm its own review');
     }
 }

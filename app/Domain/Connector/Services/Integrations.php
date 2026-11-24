@@ -207,33 +207,49 @@ class Integrations
     }
 
     /**
-     * Hands out the reviewed import payload once, for the request that imports it.
+     * The token of the rows the last review stored, for the review page's Confirm form.
      *
-     * The review step stores a token with the payload. The first request to claim that token
-     * gets the payload; any other request (a double click on Confirm, a reload, a second tab)
-     * gets an empty payload, even when it read the session before the first one cleared it.
-     * The claim is an atomic cache add, so two requests running at the same time can't both win.
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function getCachedImportToken(): string
+    {
+        return (string) session('serImportToken', '');
+    }
+
+    /**
+     * Hands out the reviewed import payload once, to the Confirm of the review that stored it.
+     *
+     * The review step stores a token with the rows and puts it in its Confirm form. The rows
+     * are handed out only when the submitted token matches, so a Confirm from an older review
+     * (another tab reviewed something else since) imports nothing. The first request to claim
+     * the token gets the rows; any other (a double click, a reload, a parallel request) gets
+     * nothing, even when it read the session before the first one cleared it, because the
+     * claim is an atomic cache add.
      *
      * @api
      *
-     * @return array{values: array, fields: array} The payload, or empty arrays when there is
-     *                                             nothing to import or it was already claimed.
+     * @param  string  $token  The token the Confirm form submitted.
+     * @return array{values: array, fields: array, entity: string} The rows, their mappings and
+     *                                                             the reviewed entity; empty when
+     *                                                             there is nothing to import.
      */
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
-    public function claimCachedImportPayload(): array
+    public function claimCachedImportPayload(string $token): array
     {
-        $nothing = ['values' => [], 'fields' => []];
+        $nothing = ['values' => [], 'fields' => [], 'entity' => ''];
         $payload = $this->getCachedImportPayload();
-        $token = (string) session('serImportToken', '');
+        $storedToken = $this->getCachedImportToken();
 
-        if ($token === '' || empty($payload['values']) || empty($payload['fields'])) {
+        if ($storedToken === '' || ! hash_equals($storedToken, $token) || empty($payload['values']) || empty($payload['fields'])) {
             return $nothing;
         }
 
-        if (! Cache::add('connector.importClaimed.'.$token, true, now()->addDay())) {
+        if (! Cache::add('connector.importClaimed.'.$storedToken, true, now()->addDay())) {
             return $nothing;
         }
 
+        $payload['entity'] = (string) session('serImportEntity', '');
         $this->forgetCachedImportPayload();
 
         return $payload;
@@ -247,6 +263,6 @@ class Integrations
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function forgetCachedImportPayload(): void
     {
-        session()->forget(['serValues', 'serFields', 'serImportToken']);
+        session()->forget(['serValues', 'serFields', 'serImportEntity', 'serImportToken']);
     }
 }

@@ -165,6 +165,7 @@ class Integration extends Controller
         $this->tpl->assign('values', $values);
         $this->tpl->assign('fields', $fields);
         $this->tpl->assign('flags', $flags);
+        $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');
     }
@@ -178,17 +179,18 @@ class Integration extends Controller
     {
         // Claimed once: a reload, a second Confirm or a parallel request gets nothing, so the
         // rows can't be imported twice. The review step only stores rows it didn't flag.
-        $payload = $this->integrationService->claimCachedImportPayload();
+        $payload = $this->integrationService->claimCachedImportPayload((string) $this->incomingRequest->request->get('importToken', ''));
 
-        // Nothing to import: the rows were already imported, the review flagged them, or the
-        // session expired. Start over instead.
+        // Nothing to import: the rows were already imported, the review flagged them, another
+        // tab reviewed something else since, or the session expired. Start over instead.
         if (empty($payload['values']) || empty($payload['fields'])) {
             $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
             return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
         }
 
-        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], (string) session('currentImportEntity'));
+        // The entity that was reviewed, not the one currently picked (another tab may have changed it).
+        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], $payload['entity']);
 
         if (! $result instanceof ImportResult) {
             $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
