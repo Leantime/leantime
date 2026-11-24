@@ -5,6 +5,7 @@ namespace Leantime\Domain\Connector\Controllers;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Core\Controller\Controller;
 use Leantime\Core\Controller\Frontcontroller;
+use Leantime\Domain\Connector\Models\ImportResult;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
 use Leantime\Domain\Connector\Services\Connector;
@@ -114,7 +115,12 @@ class Integration extends Controller
         }
 
         if ($params['step'] == 'import') {
-            return $this->handleImportStep();
+            // Importing writes data, so it only runs from the review step's Confirm form (POST).
+            if (! $this->incomingRequest->isMethod('POST')) {
+                return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+            }
+
+            return $this->handleImportStep($provider);
         }
 
         return new Response;
@@ -159,22 +165,45 @@ class Integration extends Controller
         $this->tpl->assign('values', $values);
         $this->tpl->assign('fields', $fields);
         $this->tpl->assign('flags', $flags);
+        $this->tpl->assign('importToken', $this->integrationService->getCachedImportToken());
 
         return $this->tpl->display('connector.integrationImport');
     }
 
     /**
-     * Handles the final import execution step.
+     * Handles the final import execution step and shows what was and wasn't imported.
+     *
+     * @param  object  $provider  Provider instance
      */
-    private function handleImportStep(): Response
+    private function handleImportStep(object $provider): Response
     {
-        $payload = $this->integrationService->getCachedImportPayload();
+        // Claimed once: a reload, a second Confirm or a parallel request gets nothing, so the
+        // rows can't be imported twice. The review step only stores rows it didn't flag.
+        $payload = $this->integrationService->claimCachedImportPayload((string) $this->incomingRequest->request->get('importToken', ''));
 
-        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], session('currentImportEntity'));
+        // Nothing to import: the rows were already imported, the review flagged them, another
+        // tab reviewed something else since, or the session expired. Start over instead.
+        if (empty($payload['values']) || empty($payload['fields'])) {
+            $this->tpl->setNotification($this->language->__('notification.import_nothing_to_import'), 'error');
 
-        if ($result !== true) {
-            $this->tpl->setNotification(sprintf($this->language->__('notification.import_problem'), $result), 'error');
+            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
         }
+
+        // A large file can take longer than a small server's default limit; raise it where allowed.
+        if (function_exists('set_time_limit')) {
+            set_time_limit(300);
+        }
+
+        // The entity that was reviewed, not the one currently picked (another tab may have changed it).
+        $result = $this->connectorService->importValues($payload['fields'], $payload['values'], $payload['entity']);
+
+        if (! $result instanceof ImportResult) {
+            $this->tpl->setNotification($this->language->__('notification.import_entity_not_set'), 'error');
+
+            return Frontcontroller::redirect(BASE_URL.'/connector/integration?provider='.$provider->id);
+        }
+
+        $this->tpl->assign('importResult', $result);
 
         return $this->tpl->display('connector.integrationConfirm');
     }

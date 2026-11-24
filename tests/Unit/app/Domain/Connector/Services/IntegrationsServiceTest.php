@@ -6,6 +6,7 @@ use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Repositories\Integrations as IntegrationsRepo;
 use Leantime\Domain\Connector\Repositories\LeantimeEntities;
 use Leantime\Domain\Connector\Services\Integrations;
+use Leantime\Domain\Connector\Services\ReviewedRows;
 use Unit\TestCase;
 
 /**
@@ -155,24 +156,24 @@ class IntegrationsServiceTest extends TestCase
         $this->assertFalse($patched, 'No record should be patched when the entity cannot be resolved');
     }
 
-    public function test_get_cached_import_payload_decodes_session_serialized_data(): void
+    public function test_get_cached_import_payload_reads_the_reviewed_rows(): void
     {
         $fields = [['sourceField' => 'a', 'leantimeField' => 'headline']];
         $values = [['a' => 'Hello']];
 
-        session(['serFields' => serialize($fields)]);
-        session(['serValues' => serialize($values)]);
+        (new ReviewedRows)->store($fields, $values, 'tickets');
 
         $payload = $this->makeService()->getCachedImportPayload();
 
         $this->assertSame($fields, $payload['fields']);
         $this->assertSame($values, $payload['values']);
+        $this->assertSame('tickets', $payload['entity']);
+        $this->assertNull(session('serValues'), 'the rows are kept in a file, not in the session');
     }
 
     public function test_get_cached_import_payload_defaults_to_empty_arrays(): void
     {
-        session()->forget('serFields');
-        session()->forget('serValues');
+        (new ReviewedRows)->forget();
 
         $payload = $this->makeService()->getCachedImportPayload();
 

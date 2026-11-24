@@ -104,7 +104,8 @@
         "league/flysystem-path-prefixing": "^3.0",
         "laravel/mcp": "^1.0",
         "composer/semver": "^3.4",
-        "laravel/passport": "~13.7.6"
+        "laravel/passport": "~13.7.6",
+        "shuchkin/simplexlsx": "^1.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

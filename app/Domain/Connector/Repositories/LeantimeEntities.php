@@ -117,7 +117,7 @@ class LeantimeEntities
                     'hourRemaining' => ['name' => 'Hours Remaining', 'accepts' => fieldTypes::$int, 'default' => ''],
                     'planHours' => ['name' => 'Plan Hours', 'accepts' => fieldTypes::$int, 'default' => ''],
                     'sprint' => ['name' => 'Sprint', 'accepts' => fieldTypes::$shortString, 'default' => ''],
-                    'tags' => ['name' => 'T ags', 'accepts' => fieldTypes::$text, 'default' => ''],
+                    'tags' => ['name' => 'Tags', 'accepts' => fieldTypes::$text, 'default' => ''],
                     'editFrom' => ['name' => 'Edit From', 'accepts' => fieldTypes::$dateTime, 'default' => ''],
                     'editTo' => ['name' => 'Edit To', 'accepts' => fieldTypes::$dateTime, 'default' => ''],
                     'projectName' => ['name' => 'Project', 'accepts' => fieldTypes::$shortString, 'default' => ''],

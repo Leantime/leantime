@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Connector\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Auth\Permissions\RequiresPermission;
 use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Connector\Permissions\ConnectorPermissions;
@@ -18,10 +19,13 @@ class Integrations
     /**
      * Initializes the service dependencies.
      */
-    public function __construct(IntegrationsRepo $integrationRepo, LeantimeEntities $leantimeEntities)
+    private ReviewedRows $reviewedRows;
+
+    public function __construct(IntegrationsRepo $integrationRepo, LeantimeEntities $leantimeEntities, ?ReviewedRows $reviewedRows = null)
     {
         $this->integrationRepo = $integrationRepo;
         $this->leantimeEntities = $leantimeEntities;
+        $this->reviewedRows = $reviewedRows ?? new ReviewedRows;
     }
 
     /**
@@ -180,6 +184,12 @@ class Integrations
     public function resolveProviderFields(IntegrationModel $currentIntegration, object $provider): array
     {
         if (isset($currentIntegration->fields) && $currentIntegration->fields != '') {
+            // Stored as a JSON list (headings may contain commas), or comma-separated by older uploads.
+            $decoded = json_decode((string) $currentIntegration->fields, true);
+            if (is_array($decoded)) {
+                return array_values(array_map('strval', $decoded));
+            }
+
             return explode(',', $currentIntegration->fields);
         }
 
@@ -187,21 +197,74 @@ class Integrations
     }
 
     /**
-     * Reads the cached, serialized import payload (fields + values) from the session.
-     *
-     * Pairs with Connector::cacheSerializedFieldValues() which writes the keys.
-     * Uses safe_unserialize() to avoid object injection.
+     * Reads the rows the last review stored (see ReviewedRows), without claiming them.
      *
      * @api
      *
-     * @return array{values: array, fields: array} The decoded values and field mappings
+     * @return array{values: array, fields: array, entity: string} The rows, mappings and entity.
      */
     #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
     public function getCachedImportPayload(): array
     {
-        return [
-            'values' => safe_unserialize(session('serValues'), []),
-            'fields' => safe_unserialize(session('serFields'), []),
-        ];
+        return $this->reviewedRows->load();
+    }
+
+    /**
+     * The token of the rows the last review stored, for the review page's Confirm form.
+     *
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function getCachedImportToken(): string
+    {
+        return $this->reviewedRows->token();
+    }
+
+    /**
+     * Hands out the reviewed import payload once, to the Confirm of the review that stored it.
+     *
+     * The review step stores a token with the rows and puts it in its Confirm form. The rows
+     * are handed out only when the submitted token matches, so a Confirm from an older review
+     * (another tab reviewed something else since) imports nothing. The first request to claim
+     * the token gets the rows; any other (a double click, a reload, a parallel request) gets
+     * nothing, even when it read the session before the first one cleared it, because the
+     * claim is an atomic cache add.
+     *
+     * @api
+     *
+     * @param  string  $token  The token the Confirm form submitted.
+     * @return array{values: array, fields: array, entity: string} The rows, their mappings and
+     *                                                             the reviewed entity; empty when
+     *                                                             there is nothing to import.
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function claimCachedImportPayload(string $token): array
+    {
+        $nothing = ['values' => [], 'fields' => [], 'entity' => ''];
+        $payload = $this->getCachedImportPayload();
+        $storedToken = $this->getCachedImportToken();
+
+        if ($storedToken === '' || ! hash_equals($storedToken, $token) || empty($payload['values']) || empty($payload['fields'])) {
+            return $nothing;
+        }
+
+        if (! Cache::add('connector.importClaimed.'.$storedToken, true, now()->addDay())) {
+            return $nothing;
+        }
+
+        $this->forgetCachedImportPayload();
+
+        return $payload;
+    }
+
+    /**
+     * Clears the cached import payload and its token.
+     *
+     * @api
+     */
+    #[RequiresPermission(ConnectorPermissions::MANAGE, global: true)]
+    public function forgetCachedImportPayload(): void
+    {
+        $this->reviewedRows->forget();
     }
 }

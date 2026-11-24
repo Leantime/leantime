@@ -11,7 +11,7 @@
     {!! $tpl->displayNotification() !!}
 
     <h2>{{ __('headlines.upload_csv_file') }}</h2>
-    <p>{!! sprintf(__('text.csv_upload_intro'), 'https://support.leantime.io/importing-data-via-csv') !!}</p>
+    <p>{!! sprintf(__('text.csv_upload_intro'), \Leantime\Domain\CsvImport\Services\CsvImport::DOCS_URL) !!}</p>
     <br /><br/>
     <div class="uploadWrapper" style="width:100%">
 
@@ -44,7 +44,9 @@
             debug: false,
             autoProceed: true,
             restrictions: {
-                maxFileSize: {{ $maxSize }}
+                maxFileSize: {{ $maxSize }},
+                // The reader goes by the file's content; this only keeps the picker to files it can read.
+                allowedFileTypes: ['.csv', '.tsv', '.txt', '.xlsx']
             }
         });
 
@@ -85,14 +87,16 @@
 
             jQuery(".input-error").text('');
 
-            window.location.href = "{{ BASE_URL }}/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
+            // Show what was found in the file before anything is mapped.
+            window.location.href = "{{ BASE_URL }}/csvImport/preview?integrationId="+response.body.id;
 
         });
 
 
         uppy.on('upload-error', (file, error, response) => {
 
-            jQuery(".input-error").html("<span class='label-important'>There is a problem with your CSV file: "+response.body.error+"</span>");
+            const message = response && response.body && response.body.error ? response.body.error : error.message;
+            jQuery(".input-error").html(jQuery("<span class='label-important'></span>").text(message));
 
 
 
