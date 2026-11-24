@@ -119,11 +119,12 @@ class BulkNotifications
             // An update that leaves the status out keeps the last one known.
             'status' => array_key_exists('status', $entity) ? $entity['status'] : ($known['status'] ?? null),
             'type' => strtolower((string) ($entity['type'] ?? $known['type'] ?? '')),
-            // Assignee and creator as saved; an update that leaves the assignee out (it keeps
-            // the stored one) is looked up when the summary is sent.
+            // Assignee and creator as saved. When either is missing (an update's entity has no
+            // creator, and may leave the assignee out), the stored ones are looked up when the
+            // summary is sent.
             'people' => array_values(array_unique(array_merge($known['people'] ?? [], self::ids([$entity['editorId'] ?? null, $entity['userId'] ?? null]), $collaborators))),
             'collaborators' => array_values(array_unique(array_merge($known['collaborators'] ?? [], $collaborators))),
-            'peopleKnown' => ($known['peopleKnown'] ?? false) || array_key_exists('editorId', $entity),
+            'peopleKnown' => ($known['peopleKnown'] ?? false) || (array_key_exists('editorId', $entity) && array_key_exists('userId', $entity)),
         ];
 
         return true;

@@ -167,8 +167,9 @@ class BulkNotificationsTest extends TestCase
         $bulk->hold(function () {
             // Added by Ada (1), assigned to 5, with collaborator 11.
             BulkNotifications::record($this->saved(1, 3, 'created', 9, 'task', ['editorId' => 5, 'userId' => 1, 'collaborators' => [11]]));
-            // Updated without an assignee column: the stored assignee and creator count.
-            BulkNotifications::record($this->saved(6, 4, 'updated'));
+            // Updated: updateTicket() sends the assignee but never the creator, so the stored
+            // people are looked up (to-do 6 was created by 13).
+            BulkNotifications::record($this->saved(6, 4, 'updated', 9, 'task', ['editorId' => 12]));
             // Done: its people are not involved.
             BulkNotifications::record($this->saved(7, 0, 'created', 9, 'task', ['editorId' => 14, 'collaborators' => [15]]));
         });
