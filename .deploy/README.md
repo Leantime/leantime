@@ -9,7 +9,8 @@ self-hosted installs (those use `.docker/` and the `leantime/leantime` image).
 - `entrypoint.d/`: runs on container start (cache clear, package discovery).
   Every step must be non-fatal: the script runs with `set -e`, so a failing
   command takes production down in a restart loop.
-- `nginx/security.conf`: file blocking only. Security headers come from
+- `nginx/security.conf`: file blocking, plus a 404 for the installer (`/install`,
+  everything under it except `/install/update`). Security headers come from
   Leantime's `InitialHeaders` middleware.
 
 Cloud-only behaviour (tenants, subscriptions, billing) lives in plugins

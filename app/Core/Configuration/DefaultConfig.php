@@ -212,6 +212,20 @@ class DefaultConfig
     public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
+     * @var string Earlier session passwords, comma separated. Data encrypted with one of them can
+     *             still be read, and calendar feed links made with one keep working, after
+     *             LEAN_SESSION_PASSWORD was changed. New data always uses LEAN_SESSION_PASSWORD.
+     */
+    public string $sessionPasswordPrevious = '';
+
+    /**
+     * @var bool Whether /install may send a visitor back into the setup of an owner the installer
+     *           created but nobody finished (the only account, no password, never signed in).
+     *           Switch off where owner accounts are provisioned for others and invited by email.
+     */
+    public bool $allowOwnerSetupResume = true;
+
+    /**
      * @var int How many minutes after inactivity should we logout?  480min = 8hours
      */
     public int $sessionExpiration = 480;

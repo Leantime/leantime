@@ -3,6 +3,7 @@
 namespace Unit\app\Domain\Install\Services;
 
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Events\EventDispatcher;
 use Leantime\Domain\Install\Repositories\Install as InstallRepository;
 use Leantime\Domain\Install\Services\Install as InstallService;
@@ -27,11 +28,16 @@ class InstallServiceTest extends TestCase
         ?AppSettings $appSettings = null,
         ?InstallRepository $installRepo = null,
         ?SettingService $settingService = null,
+        bool $allowOwnerSetupResume = true,
     ): InstallService {
+        $config = $this->make(Environment::class);
+        $config->set('allowOwnerSetupResume', $allowOwnerSetupResume);
+
         return new InstallService(
             $appSettings ?? $this->make(AppSettings::class),
             $installRepo ?? $this->make(InstallRepository::class),
             $settingService ?? $this->make(SettingService::class),
+            $config,
         );
     }
 
@@ -256,6 +262,21 @@ class InstallServiceTest extends TestCase
         ]);
 
         $this->assertNull($this->makeService(installRepo: $installRepo)->resumeOwnerSetup());
+    }
+
+    public function test_resume_owner_setup_hands_out_nothing_when_switched_off(): void
+    {
+        // Hosted accounts: the owner is provisioned for someone else and gets the setup link by
+        // email, so the public /install page must never reveal it.
+        $installRepo = $this->make(InstallRepository::class, [
+            'getFirstUsers' => function (): array {
+                $this->fail('The owner must not even be looked up when resuming is switched off');
+            },
+        ]);
+
+        $service = $this->makeService(installRepo: $installRepo, allowOwnerSetupResume: false);
+
+        $this->assertNull($service->resumeOwnerSetup());
     }
 
     public function test_resume_owner_setup_fails_closed_when_the_users_cannot_be_read(): void

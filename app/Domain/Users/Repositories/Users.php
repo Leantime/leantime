@@ -10,6 +10,7 @@ use Leantime\Core\Auth\Permissions\PermissionService;
 use Leantime\Core\Configuration\Environment;
 use Leantime\Core\Db\DatabaseHelper;
 use Leantime\Core\Db\Db as DbCore;
+use Leantime\Core\Encryption\EncryptionServiceProvider;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Files\Repositories\Files;
 use Leantime\Domain\Users\Enums\EmploymentType;
@@ -81,15 +82,33 @@ class Users
     }
 
     /**
-     * getUser - get on user from db
+     * getUserBySha - the user whose id, salted with the session password, hashes to the given value.
+     *
+     * Hashes made with an earlier session password (LEAN_SESSION_PASSWORD_PREVIOUS) still match, so
+     * calendar feed links survive a changed session password. The hash only locates the user; the
+     * feed's own secret is what grants access.
+     *
+     * @param  string  $hash  sha1 of user id + session password.
+     * @return array<string, mixed>|false The user row, or false when no user matches.
      */
     public function getUserBySha($hash): array|false
     {
-        $result = $this->connection->table('zp_user')
-            ->whereRaw('SHA1(CONCAT(id, ?)) = ?', [$this->config->sessionPassword, $hash])
-            ->first();
+        $sessionPasswords = [
+            $this->config->sessionPassword,
+            ...EncryptionServiceProvider::previousSessionPasswords((string) $this->config->sessionPasswordPrevious),
+        ];
 
-        return $result ? (array) $result : false;
+        foreach ($sessionPasswords as $sessionPassword) {
+            $result = $this->connection->table('zp_user')
+                ->whereRaw('SHA1(CONCAT(id, ?)) = ?', [$sessionPassword, $hash])
+                ->first();
+
+            if ($result) {
+                return (array) $result;
+            }
+        }
+
+        return false;
     }
 
     /**

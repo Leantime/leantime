@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Leantime\Core\Configuration\AppSettings;
+use Leantime\Core\Configuration\Environment;
 use Leantime\Domain\Install\Repositories\Install as InstallRepository;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Users\Events\UserCreated;
@@ -18,11 +19,13 @@ class Install
      *                                          domain runs before the full app/DB bootstrap is guaranteed,
      *                                          so the service legitimately wraps the repository directly.
      * @param  SettingService  $settingService  Setting service used to read the stored db-version.
+     * @param  Environment  $config  Configuration (whether /install may resume an unfinished owner setup).
      */
     public function __construct(
         protected AppSettings $appSettings,
         protected InstallRepository $installRepo,
-        protected SettingService $settingService
+        protected SettingService $settingService,
+        protected Environment $config,
     ) {}
 
     /**
@@ -120,12 +123,21 @@ class Install
      * account and has never signed in, the instance is as unclaimed as before the install, so
      * handing out its setup link exposes nothing an uninstalled instance wouldn't.
      *
+     * That only holds when the installer itself created the owner. Where accounts are provisioned
+     * for someone else and the setup link is sent by email (hosted, multi-tenant), the link is the
+     * proof of owning that address and must stay private: such deployments switch this off with
+     * LEAN_ALLOW_OWNER_SETUP_RESUME=false.
+     *
      * @return string|null The token for /auth/userInvite/{token}, or null when there is no such owner.
      *
      * @internal Not exposed over JSON-RPC: only the Install controller may hand out the owner setup.
      */
     public function resumeOwnerSetup(): ?string
     {
+        if ($this->config->allowOwnerSetupResume !== true) {
+            return null;
+        }
+
         try {
             $firstUsers = $this->installRepo->getFirstUsers(2);
 
