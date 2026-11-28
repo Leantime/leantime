@@ -217,7 +217,7 @@ leantime.kanbanController = (function () {
             equalizeColumnHeights(content);
         }
 
-        // Persist state to session via JSON-RPC
+        // Persist per-user UI state via JSON-RPC
         leantime.rpc('Api.Api.setSubmenuState', {
             submenu: 'swimlane_' + swimlaneId,
             state: newExpanded ? 'open' : 'closed'

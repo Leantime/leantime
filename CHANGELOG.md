@@ -1,3 +1,8 @@
+# Unreleased
+
+## Fixes
+- Kanban swimlanes merge empty and zero priority/effort values, restore saved collapsed states, and display the correct overdue, due-soon and stale indicators (#4135).
+
 # Version: 3.17.0
 
 ## Highlights

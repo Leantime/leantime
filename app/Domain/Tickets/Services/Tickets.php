@@ -881,9 +881,15 @@ class Tickets extends BaseService
             $sortId = null; // Custom sort ID, defaults to groupedFieldValue if null
 
             if (isset($ticket[$searchCriteria['groupBy']])
-                || ($searchCriteria['groupBy'] === 'dependingTicketId' && array_key_exists('dependingTicketId', $ticket))
+                || (in_array($searchCriteria['groupBy'], ['dependingTicketId', 'priority', 'storypoints'], true)
+                    && array_key_exists($searchCriteria['groupBy'], $ticket))
             ) {
                 $groupedFieldValue = strtolower((string) ($ticket[$searchCriteria['groupBy']] ?? '0'));
+                // Imports and older records use both empty strings and zero for unset values.
+                // Normalize the grouping key as well as the label/id, without changing the ticket.
+                if (in_array($searchCriteria['groupBy'], ['priority', 'storypoints'], true) && $groupedFieldValue === '') {
+                    $groupedFieldValue = '0';
+                }
 
                 if (isset($ticketGroups[$groupedFieldValue])) {
                     $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
@@ -1271,7 +1277,7 @@ class Tickets extends BaseService
             $hasOverdue = false;
             $hasDueSoon = false;
             $allStale = true;
-            $now = CarbonImmutable::now();
+            $now = CarbonImmutable::now('UTC');
 
             foreach ($group['items'] as $ticket) {
                 // $statusField is 'statusType' on the program (cross-project) kanban, where
@@ -1284,21 +1290,21 @@ class Tickets extends BaseService
 
                 // Time alert logic
                 // Check for overdue (highest priority)
-                if (isset($ticket['dateToFinish']) && ! empty($ticket['dateToFinish'])) {
-                    $dueDate = CarbonImmutable::parse($ticket['dateToFinish']);
+                // The legacy no-date values ('0000-00-00 ...', '1969-12-31 00:00:00') mean "no deadline", not a past date.
+                $dueDate = $this->parseDbDateTimeOrNull($ticket['dateToFinish'] ?? null);
+                if ($dueDate !== null) {
                     if ($dueDate->isPast()) {
                         $hasOverdue = true;
-                    } elseif ($dueDate->diffInDays($now) <= 3) {
+                    } elseif ($now->diffInDays($dueDate) <= 3) {
                         $hasDueSoon = true;
                     }
                 }
 
                 // Check for stale (no activity for 14+ days)
-                if (isset($ticket['editedDate']) && ! empty($ticket['editedDate'])) {
-                    $lastActivity = CarbonImmutable::parse($ticket['editedDate']);
-                    if ($lastActivity->diffInDays($now) < 14) {
-                        $allStale = false;
-                    }
+                $lastActivity = $this->parseDbDateTimeOrNull($ticket['modified'] ?? null)
+                    ?? $this->parseDbDateTimeOrNull($ticket['date'] ?? null);
+                if ($lastActivity === null || $lastActivity->diffInDays($now) < 14) {
+                    $allStale = false;
                 }
             }
 

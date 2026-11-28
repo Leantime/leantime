@@ -98,7 +98,7 @@
 
             @if ($group['label'] != 'all')
                 @php
-                $swimlaneExpanded = ! in_array($group['id'], session('collapsedSwimlanes', []));
+                $swimlaneExpanded = app(\Leantime\Core\UI\UiState::class)->get('swimlane_'.$group['id'], 'open') !== 'closed';
                 $groupBy = $searchCriteria['groupBy'] ?? 'status';
                 $groupId = $group['id'];
                 $groupIdKey = (string) $groupId;
@@ -124,7 +124,7 @@
                         :statusColumns="$allKanbanColumns"
                         :expanded="$swimlaneExpanded"
                         :moreInfo="$group['more-info'] ?? null"
-                        :timeAlert="$group['timeAlert'] ?? null"
+                        :timeAlert="$timeAlert"
                     />
 
                     <div class="kanban-swimlane-content{{ !$swimlaneExpanded ? ' collapsed' : '' }}" id="swimlane-content-{{ $group['id'] }}">
