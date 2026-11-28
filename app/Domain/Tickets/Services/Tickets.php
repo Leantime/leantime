@@ -1290,8 +1290,9 @@ class Tickets extends BaseService
 
                 // Time alert logic
                 // Check for overdue (highest priority)
-                if (isset($ticket['dateToFinish']) && ! empty($ticket['dateToFinish'])) {
-                    $dueDate = CarbonImmutable::parse($ticket['dateToFinish'], 'UTC');
+                // The legacy no-date values ('0000-00-00 ...', '1969-12-31 00:00:00') mean "no deadline", not a past date.
+                $dueDate = $this->parseDbDateTimeOrNull($ticket['dateToFinish'] ?? null);
+                if ($dueDate !== null) {
                     if ($dueDate->isPast()) {
                         $hasOverdue = true;
                     } elseif ($now->diffInDays($dueDate) <= 3) {
@@ -1300,8 +1301,9 @@ class Tickets extends BaseService
                 }
 
                 // Check for stale (no activity for 14+ days)
-                $lastActivityDate = $ticket['modified'] ?? $ticket['date'] ?? null;
-                if (empty($lastActivityDate) || CarbonImmutable::parse($lastActivityDate, 'UTC')->diffInDays($now) < 14) {
+                $lastActivity = $this->parseDbDateTimeOrNull($ticket['modified'] ?? null)
+                    ?? $this->parseDbDateTimeOrNull($ticket['date'] ?? null);
+                if ($lastActivity === null || $lastActivity->diffInDays($now) < 14) {
                     $allStale = false;
                 }
             }

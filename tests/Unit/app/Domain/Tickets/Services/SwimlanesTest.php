@@ -89,6 +89,36 @@ class SwimlanesTest extends TestCase
             'outside window' => ['2026-12-01 12:00:01', null],
             'next month' => ['2026-12-28 12:00:00', null],
             'no deadline' => ['', null],
+            'legacy zero date' => ['0000-00-00 00:00:00', null],
+            'legacy no-date value' => ['1969-12-31 00:00:00', null],
+        ];
+    }
+
+    /** @dataProvider legacyNoDeadlineValues */
+    public function test_legacy_no_deadline_values_do_not_override_other_alerts(string $noDeadline): void
+    {
+        CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-11-28 12:00:00', 'UTC'));
+        $groups = [
+            ['id' => 'dueSoon', 'label' => 'Due soon', 'items' => [
+                ['status' => 1, 'dateToFinish' => $noDeadline, 'modified' => '2026-11-28 12:00:00'],
+                ['status' => 1, 'dateToFinish' => '2026-11-29 12:00:00', 'modified' => '2026-11-28 12:00:00'],
+            ]],
+            ['id' => 'stale', 'label' => 'Stale', 'items' => [
+                ['status' => 1, 'dateToFinish' => $noDeadline, 'modified' => '2026-11-01 12:00:00'],
+            ]],
+        ];
+
+        $result = $this->service()->getStatusBreakdownBySwimlane($groups, [1 => 'New']);
+
+        $this->assertSame('dueSoon', $result['dueSoon']['timeAlert']);
+        $this->assertSame('stale', $result['stale']['timeAlert']);
+    }
+
+    public static function legacyNoDeadlineValues(): array
+    {
+        return [
+            'zero date' => ['0000-00-00 00:00:00'],
+            'legacy no-date value' => ['1969-12-31 00:00:00'],
         ];
     }
 
@@ -131,6 +161,7 @@ class SwimlanesTest extends TestCase
             'not yet fourteen days' => [['modified' => '2026-11-14 12:00:01'], null],
             'new unedited ticket' => [['modified' => null, 'date' => '2026-11-28 12:00:00'], null],
             'old unedited ticket' => [['modified' => null, 'date' => '2026-11-14 12:00:00'], 'stale'],
+            'zero edit date falls back to creation' => [['modified' => '0000-00-00 00:00:00', 'date' => '2026-11-28 12:00:00'], null],
             'unknown activity' => [[], null],
         ];
     }
